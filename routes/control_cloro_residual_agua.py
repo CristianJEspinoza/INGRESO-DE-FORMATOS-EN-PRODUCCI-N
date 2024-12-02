@@ -2,15 +2,18 @@ import os
 import datetime
 
 from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
 from connection.database import execute_query
 from .utils.constans import POES
 from .utils.helpers import image_to_base64
 from .utils.helpers import generar_reporte
 from .utils.helpers import get_cabecera_formato_v2
 
+
 controlCloroResidual = Blueprint('control_cloro_residual', __name__)
 
 @controlCloroResidual.route('/', methods=['GET', 'POST'])
+@login_require
 def control_cloro_residual():
     if request.method == 'GET':
         try:

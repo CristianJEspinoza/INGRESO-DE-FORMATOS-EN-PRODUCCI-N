@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, send_file
+from auth.auth import login_require
 from connection.database import execute_query
 import psycopg2
 import base64
@@ -13,6 +14,7 @@ import io
 controlGeneral = Blueprint('control_general', __name__)
 
 @controlGeneral.route('/', methods=['GET', 'POST'])
+@login_require
 def control_general():
     if request.method == 'GET':
         try:

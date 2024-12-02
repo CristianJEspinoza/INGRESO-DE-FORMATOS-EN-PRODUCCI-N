@@ -2,6 +2,7 @@ import os
 import pprint
 
 from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
 from connection.database import execute_query
 from collections import defaultdict
 from datetime import datetime
@@ -16,6 +17,7 @@ from .utils.helpers import get_ultimo_dia_laboral_del_mes
 limpieza_areas = Blueprint('limpieza_areas', __name__)
 
 @limpieza_areas.route('/', methods=['GET'])
+@login_require
 def limpiezaAreas():
     try:
         # Obtener todas las áreas

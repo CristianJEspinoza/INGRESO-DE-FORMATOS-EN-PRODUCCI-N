@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, request, jsonify, send_file
+from auth.auth import login_require
 from connection.database import execute_query
 from datetime import datetime
 
 monitoreoAgua = Blueprint('monitoreoAgua', __name__)
 
 @monitoreoAgua.route('/')
+@login_require
 def monitoreo_agua():
     try:
         # Obtener el formato creado con el id de formato 11

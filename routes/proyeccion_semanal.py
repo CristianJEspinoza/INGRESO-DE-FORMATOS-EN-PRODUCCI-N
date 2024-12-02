@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
 from connection.database import execute_query
 from datetime import datetime, timedelta
 from math import ceil
@@ -6,6 +7,7 @@ from math import ceil
 proyeccionsemanal = Blueprint('proyeccion_semanal', __name__)
 
 @proyeccionsemanal.route('/', methods=['GET'])
+@login_require
 def proyeccion_semanal():
     proyeccion = execute_query("""SELECT * 
                                     FROM v_proyeccion_semanal 
