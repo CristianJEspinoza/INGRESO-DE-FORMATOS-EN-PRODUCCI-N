@@ -333,20 +333,21 @@ def download_formato():
 
     # Obtener el id del trabajador de los argumentos de la URL
     formato_id=1 # request.args.get('formato_id') # Por el momento cumple para todos los reportes
-    mes=request.args.get('mes')
+    nombre_mes=request.args.get('mes')
     anio=request.args.get('anio')
+    mes=MESES.get(nombre_mes.lower(), 0)
 
     cabecera=get_cabecera_formato("verificacion_limpieza_desinfeccion_areas", formato_id)
 
     # Realizar la consulta para todos los registros y controles de envasados finalizados
     registros = execute_query(f"""SELECT id_verificacion_limpieza_desinfeccion_area, detalle_area_produccion, id_area_produccion, mes, anio, estado
 	FROM public.v_verificacion_limpieza_desinfeccion_areas
-	WHERE mes = '{mes}' AND anio = '{anio}' AND estado = 'CERRADO'""")
+	WHERE mes = '{nombre_mes.capitalize()}' AND anio = '{anio}' AND estado = 'CERRADO'""")
 
     # Crear un diccionario para mapear cada 'id_area_produccion' con su 'detalle_area_produccion'
     areas = {registro['id_area_produccion']: registro['detalle_area_produccion'] for registro in registros}
 
-    pprint.pprint(areas)
+    # pprint.pprint(areas)
 
     # Crear un diccionario info para almacenar los datos
     info = defaultdict(lambda: defaultdict(lambda: {"dias": [], "frecuencia": ""}))
@@ -355,7 +356,7 @@ def download_formato():
         # Realizar una consulta para obtener los detalles específicos de cada área
         detalles_limpieza_area = execute_query(f"""SELECT id_detalle_verificacion_limpieza_desinfeccion_area, fecha, id_verificacion_limpieza_desinfeccion_area, fk_idarea_produccion, id_categorias_limpieza_desinfeccion, detalles_categorias_limpieza_desinfeccion, frecuencia
         FROM public.v_detalles_verificacion_limpieza_desinfeccion_areas
-        WHERE fk_idarea_produccion={id_area}""")
+        WHERE fk_idarea_produccion={id_area} AND EXTRACT(MONTH FROM TO_DATE(fecha, 'DD/MM/YYYY')) = {mes}""")
 
         # Crear el subdiccionario para esta área
         sub_info = defaultdict(lambda: {"dias": [], "frecuencia": ""})
@@ -396,7 +397,7 @@ def download_formato():
         anio=registros[0]['anio']
     )
 
-    file_name = f"{title_report.replace(' ','-')}--{mes}--{anio}--F"
+    file_name = f"{title_report.replace(' ','-')}--{registros[0]['mes']}--{anio}--F"
     return generar_reporte(template, file_name)
 
 
