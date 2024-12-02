@@ -1,11 +1,14 @@
-from flask import Blueprint, render_template, request, jsonify
-from connection.database import execute_query
 import datetime
-import time
+
+from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
+from connection.database import execute_query
+
 
 controlCloroResidual = Blueprint('control_cloro_residual', __name__)
 
 @controlCloroResidual.route('/', methods=['GET', 'POST'])
+@login_require
 def control_cloro_residual():
     if request.method == 'GET':
         try:

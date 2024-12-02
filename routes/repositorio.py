@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, send_file
+from auth.auth import login_require
 from connection.azure_storage import upload_file
 from connection.Adls import Adls
 from dotenv import load_dotenv
@@ -17,6 +18,7 @@ adls = Adls(type=1, container=os.getenv('container'))
 repositorioIFP = Blueprint('repositorio_IFP', __name__)
 
 @repositorioIFP.route('/', methods=['GET'])
+@login_require
 def repositorio_IFP():
     try:
         return render_template('repositorio.html')

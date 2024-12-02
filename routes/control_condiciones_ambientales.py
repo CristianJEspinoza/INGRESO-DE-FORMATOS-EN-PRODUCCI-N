@@ -3,6 +3,7 @@ import io
 import zipfile
 
 from flask import Blueprint, render_template, request, jsonify, send_file
+from auth.auth import login_require
 from connection.database import execute_query
 from datetime import datetime
 from datetime import time
@@ -17,6 +18,7 @@ from .utils.helpers import get_ultimo_dia_laboral_del_mes
 condiciones_ambientales = Blueprint('condiciones_ambientales', __name__)
 
 @condiciones_ambientales.route('/', methods=['GET', 'POST'])
+@login_require
 def condicionesAmbientales():
     if request.method == 'GET':
         try:

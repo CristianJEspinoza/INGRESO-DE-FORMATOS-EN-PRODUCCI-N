@@ -3,6 +3,7 @@ import io
 import zipfile
 
 from flask import Blueprint, render_template, request, jsonify, send_file
+from auth.auth import login_require
 from connection.database import execute_query
 from .utils.constans import BPM
 from .utils.helpers import image_to_base64
@@ -17,6 +18,7 @@ from datetime import datetime
 controlEnvasados = Blueprint('control_envasados', __name__)
 
 @controlEnvasados.route('/', methods=['GET'])
+@login_require
 def control_envasados():
     try:
         # Obtener datos principales

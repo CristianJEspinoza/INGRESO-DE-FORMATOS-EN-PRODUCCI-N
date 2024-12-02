@@ -1,6 +1,7 @@
 import os
 
 from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
 from connection.database import execute_query
 from collections import defaultdict
 from datetime import datetime
@@ -15,6 +16,7 @@ from .utils.helpers import get_ultimo_dia_laboral_del_mes
 limpieza_equipos_medicion = Blueprint('limpieza_equipos_medicion', __name__)
 
 @limpieza_equipos_medicion.route('/', methods=['GET'])
+@login_require
 def limpiezaEquiposMedicion():
     try:
         # Obtener las verificaciones en estado creado
