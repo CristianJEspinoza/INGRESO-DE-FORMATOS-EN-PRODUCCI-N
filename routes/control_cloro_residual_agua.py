@@ -1,7 +1,12 @@
+import os
+import datetime
+
 from flask import Blueprint, render_template, request, jsonify
 from connection.database import execute_query
-import datetime
-import time
+from .utils.constans import POES
+from .utils.helpers import image_to_base64
+from .utils.helpers import generar_reporte
+from .utils.helpers import get_cabecera_formato_v2
 
 controlCloroResidual = Blueprint('control_cloro_residual', __name__)
 
@@ -180,7 +185,7 @@ def generar_formato_CCA():
 def obtener_detalle_CCA(id_formatos):
     try:
         # Ejecutar la consulta SQL para obtener los detalles
-        query = "SELECT fecha, hora, lectura, observacion, detalle_accion_correctiva, estado_accion_correctiva FROM v_detalles_controles_cloro_residual_agua WHERE id_header_format = %s"
+        query = "SELECT fecha, hora, lectura, observacion, detalle_accion_correctiva, estado_accion_correctiva FROM v_detalles_controles_cloro_residual_agua WHERE id_header_format = %s ORDER BY fecha"
         detalles = execute_query(query, (id_formatos,))
 
         # Verificar si se encontraron resultados
@@ -213,7 +218,47 @@ def estadoAC(id_ca):
 #PAra descargar el formato
 @controlCloroResidual.route('/download_formato', methods=['GET'])
 def download_formato():
-    pass
+    # Obtener el id del trabajador de los argumentos de la URL
+    print(request.args)
+    id_header_format = request.args.get('formato_id')
+
+    cabecera = get_cabecera_formato_v2(id_header_format)
+
+    print('cabecera', cabecera)
+
+    # Realizar la consulta para el detalle de todos los registros y controles de envasados finalizados
+    detalle_registros = execute_query(
+        f"""SELECT
+            fecha, hora, lectura, observacion, detalle_accion_correctiva, estado_accion_correctiva
+        FROM v_detalles_controles_cloro_residual_agua WHERE id_header_format = {id_header_format} ORDER BY fecha;"""
+    )
+
+    # Extraer datos de la cabecera
+    month=cabecera[0]['mes']
+    year=cabecera[0]['anio']
+    format_code=cabecera[0]['codigo']
+    format_frequency=cabecera[0]['frecuencia']
+
+    # Generar Template para reporte
+    logo_path = os.path.join('static', 'img', 'logo.png')
+    logo_base64 = image_to_base64(logo_path)
+    title_report = cabecera[0]['nombreformato']
+
+    # Renderiza la plantilla
+    template = render_template(
+        "reports/reporte_control_cloro_residual_agua.html",
+        title_manual=POES,
+        title_report=title_report,
+        format_code_report=format_code,
+        frecuencia_registro=format_frequency,
+        logo_base64=logo_base64,
+        info=detalle_registros
+    )
+
+    # Generar el nombre del archivo usando las variables de fecha
+    file_name = f"{title_report.replace(' ', '-')}--{month}--{year}--F"
+    return generar_reporte(template, file_name)
+
 
 #Para finalizar el registro
 @controlCloroResidual.route('/finalizar_registro_CCA', methods=['POST'])
