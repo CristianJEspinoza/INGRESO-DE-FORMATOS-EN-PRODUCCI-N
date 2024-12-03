@@ -11,11 +11,11 @@
         <form id="formLogin" class="needs-validation" novalidate>
           <div class="mb-3">
             <input
-              id="dni"
-              name="dni"
+              id="username"
+              name="username"
               type="text"
-              autocomplete="dni"
-              placeholder="DNI"
+              autocomplete="username"
+              placeholder="Usuario"
               required
               maxlength="8"
               class="form-control"
@@ -54,7 +54,7 @@
       form.addEventListener('submit', (event) => {
               event.preventDefault();
               const formData = new FormData(form);
-              console.log('formData', form)
+
               fetch('login', {
                   method: 'POST',
                   body: formData
