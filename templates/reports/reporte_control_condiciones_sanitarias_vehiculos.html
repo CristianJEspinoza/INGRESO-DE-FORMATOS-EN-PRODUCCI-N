@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% include "reports/head_report.html" %}
+<body>
+    <table class="main-table">
+        <!-- Encabezado del reporte -->
+        <thead>
+            <tr>
+                <td colspan="16">
+                    {% include "reports/header_component.html" %}
+                </td>
+            </tr>
+            <!-- Información subtitulo -->
+            <tr>
+                <td colspan="6">
+                   <b>FRECUENCIA:</b> {{ frecuencia_registro }}
+                </td>
+                <td colspan="4">
+                    <b>Semana</b> Del _____ al _______
+                </td>
+                <td colspan="3">
+                    <b>Mes:</b> {{month}}
+                </td>
+                <td colspan="3">
+                    <b>Año:</b> {{year}}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="16">
+                    <b>Indicaciones:</b>
+                    <br/>
+                    - Completar la información básica del vehículo y verificar los aspectos de control colocando <b>&#10003;</b> de conformidad o <b>X</b> de No conformidad.
+                    <br/>
+                    - <b>MP:</b> Materia Prima; <b>PT:</b> Producto Terminado; <b>EEME:</b> Envases y Embalajes; <b>O:</b> Otro
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <b>UBICACIÓN (Almacén o área):</b> _____________________________
+                </td>
+            </tr>
+            <!-- Cabecera del cuerpo del reporte -->
+            <tr class="border">
+                <th class="border" rowspan="2">FECHA</th>
+                <th class="border" rowspan="2">CARGA(k) o DESCARGA(D)</th>
+                <th class="border" rowspan="2">OP</th>
+                <th class="border" rowspan="2">N° TOTAL DE BULTOS (UNIDADES O KG)</th>
+                <th class="border" colspan="3">DATOS DEL VEHÍCULO</th>
+                <th class="border" colspan="7">VERIFICACIÓN</th>
+                <th class="border" rowspan="2">OBSERVACIONES / ACCIONES CORRECTIVAS</th>
+                <th class="border" rowspan="2">V°B° AC</th>
+            </tr>
+            <tr>
+                <th  class="border s3">TIPO DE VEHÍCULO</th>
+                <th  class="border s3">MARCA</th>
+                <th  class="border s3">N° DE PLACA</th>
+
+                <th  class="border s3">AREA DE CARGA HERMÉTICA</th>
+                <th  class="border s3">NO TRANSPORTA PERSONAS JUNTO AL PRODUCTO</th>
+                <th  class="border s3">TRANSPORTE EXCLUSIVO</th>
+                <th  class="border s3">PISO Y TECHO LIMPIO</th>
+                <th  class="border s3">PAREDES Y PUERTAS LIMPIAS</th>
+                <th  class="border s3">LIBRE DE OLORES</th>
+                <th  class="border s3">PRODUCTO PROTEGIDO</th>
+            </tr>
+        </thead>
+
+        <!-- Cuerpo del reporte -->
+        <tbody class="body-content">
+            {% for record in info %}
+            <tr class="text-center">
+                <td>{{ record['fecha'] }}</td>
+                <td>{{ record['detalle_motivo_vehiculo'] }}</td>
+                <td>{{ record['documento_referencia'] }}</td>
+                <td>{{ record['total_bultos'] }}</td>
+                <td>{{ record['detalle_tipo_vehiculo'] }}</td>
+                <td>-</td>
+                <td>{{ record['num_placa_vehiculo'] }}</td>
+                {% for i in range(1, 8) %}
+                    {% if record['verificacion_vehiculos'][i] is none %}
+                        <td class="text-center"></td>
+                    {% elif record['verificacion_vehiculos'][i] == True %}
+                        <td class="text-center">&#x2713;</td>
+                    {% else %}
+                        <td class="text-center">X</td>
+                    {% endif %}
+                {% endfor %}
+                <td>{{ record['observaciones'] }}</td>
+                <td>{{ record['estado_medida_correctiva'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <!-- Pie del reporte -->
+        <tfoot>
+            <tr>
+                <td colspan="16" style="padding-top: 25pt;">
+                    {% include "reports/footer_component.html" %}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>
