@@ -1,6 +1,7 @@
 import os
 
 from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
 from connection.database import execute_query
 from datetime import datetime
 from .utils.constans import POES
@@ -14,6 +15,7 @@ from .utils.helpers import get_ultimo_dia_laboral_del_mes
 registro_monitoreo_insectos = Blueprint('registro_monitoreo_insectos', __name__)
 
 @registro_monitoreo_insectos.route('/', methods=['GET'])
+@login_require
 def registroMonitoreoInsectos():
     try:
         # Obtener las verificaciones en estado creado

@@ -52,6 +52,26 @@ def get_cabecera_formato(tabla: str, id_formato: str) -> list:
     return execute_query(query, (id_formato,))
 
 
+def get_cabecera_formato_v2(fk_id_header_format: int) -> list:
+    """
+    Función para obtener la cabecera de un formato dado usando únicamente el id_header_format.
+
+    :param fk_id_header_format: Identificador de la cabecera en headers_formats.
+    :return:
+        [('idtipoformato', 11), ('nombreformato', 'CONTROL DE CLORO RESIDUAL EN AGUA'), ('frecuencia', 'INTERDIARIO'), ('codigo', 'TI-POES-F07- CCA'), ('id_header_format', 1), ('mes', '11'), ('anio', '2024')]
+    """
+    # Construir la consulta SQL usando headers_formats como intermediaria
+    query = f"""
+        SELECT tf.idtipoformato, tf.nombreformato, tf.frecuencia, tf.codigo, hf.id_header_format, hf.mes, hf.anio
+        FROM tiposformatos tf
+        INNER JOIN headers_formats hf ON tf.idtipoformato = hf.fk_idtipoformatos
+        WHERE hf.id_header_format = %s
+    """
+
+    # Ejecutar la consulta y devolver el resultado
+    return execute_query(query, (fk_id_header_format,))
+
+
 def image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
@@ -75,7 +95,7 @@ def generar_reporte(template, filename_report='Reporte_sin_nombre', orientation=
             raise ValueError("El contenido HTML de la plantilla no puede estar vacío y debe ser una cadena válida.")
 
         # Configuración de pdfkit con la ruta del ejecutable wkhtmltopdf WINDOWS
-        # wkhtmltopdf_path = os.path.join('tools', 'wkhtmltox', 'bin', 'wkhtmltopdf.exe')
+        wkhtmltopdf_path = os.path.join('tools', 'wkhtmltox', 'bin', 'wkhtmltopdf.exe')
 
         # Detectar ruta de wkhtmltopdf, # Detecta automáticamente la ruta de wkhtmltopdf en docker
         wkhtmltopdf_path = shutil.which("wkhtmltopdf")

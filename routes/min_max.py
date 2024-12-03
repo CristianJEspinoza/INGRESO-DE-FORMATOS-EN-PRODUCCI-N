@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
 from connection.database import execute_query
 
 minmax = Blueprint('min_max', __name__)
 
 @minmax.route('/', methods=['GET'])
+@login_require
 def min_max():
     min_max = execute_query("SELECT * FROM v_min_max ORDER BY id_min_max")
     return render_template('min_max.html', min_max=min_max)
