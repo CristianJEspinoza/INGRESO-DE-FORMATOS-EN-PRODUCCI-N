@@ -4,13 +4,14 @@ from auth.auth import login_require
 from datetime import datetime
 
 from connection.database import execute_query
-from .utils.constans import MESES_BY_NUM
+from .utils.constans import MESES
 from .utils.constans import POES
 from .utils.helpers import image_to_base64
 from .utils.helpers import generar_reporte
 from .utils.helpers import get_cabecera_formato_v2
 
 import pprint
+
 
 condiciones_sanitarias_vehiculos = Blueprint('condiciones_sanitarias_vehiculos', __name__)
 
@@ -289,41 +290,50 @@ def finalizar_Detalles_CSV():
 @condiciones_sanitarias_vehiculos.route('/download_formato', methods=['GET'])
 def download_formato():
     # Obtener el id del trabajador de los argumentos de la URL
-    print(request.args)
-    id_header_format = request.args.get('formato_id')
+    month_name = request.args.get('month')
+    month = MESES[month_name.lower()]
 
-    cabecera = get_cabecera_formato_v2(id_header_format)
+    query_header_and_area = f"""SELECT id_header_format, a.detalle_area
+                                FROM public.headers_formats hf 	LEFT JOIN areas a ON hf.fk_idarea = a.idarea
+                                WHERE fk_idtipoformatos = 12 AND mes = '%s'"""
+    list_header_formats_with_area = execute_query(query_header_and_area, (month,))
 
-    print('cabecera', cabecera)
-    query_detalle_CA = "SELECT * FROM v_detalle_condiciones_vehiculos WHERE fk_id_header_format = %s ORDER BY fecha DESC"
-    detalle_CSV = execute_query(query_detalle_CA, (id_header_format,))
+    id_header_format_to_cabecera=list_header_formats_with_area[0]['id_header_format']
+    cabecera = get_cabecera_formato_v2(id_header_format_to_cabecera)
 
-    # Obtener las asignaciones de verificación previa para cada detalle
-    detalles_formateados = []
+    info = {}
+    # list_header_formats = [ RealDictRow([('id_header_format', 14), ('detalle_area', 'Materias Primas')]), RealDictRow([('id_header_format', 2), ('detalle_area', 'Envases y Embalajes')])]
+    for row in list_header_formats_with_area:
+        name = row['detalle_area']
+        id_header_format = row['id_header_format']
 
-    for detalle in detalle_CSV:
-        # Formatear la fecha
-        detalle['fecha'] = detalle['fecha'].strftime('%d/%m/%Y')  # Formatear la fecha a DD/MM/YYYY
+        query_detalle_CA = "SELECT * FROM v_detalle_condiciones_vehiculos WHERE fk_id_header_format = %s ORDER BY fecha DESC"
+        detalle_CSV = execute_query(query_detalle_CA, (id_header_format,))
 
         # Obtener las asignaciones de verificación previa para cada detalle
-        query_asignaciones = "SELECT fk_id_verificion_vehiculos FROM asignacion_detalles_condiciones_sanitarias_vehiculos WHERE fk_id_detalle_condicion_sanitaria_vehiculo = %s"
-        asignaciones = execute_query(query_asignaciones, (detalle['id_detalle_condicion_sanitaria_vehiculo_transporte'],))
+        detalles_formateados = []
 
-        verificacion = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}
+        for detalle in detalle_CSV:
+            # Formatear la fecha
+            detalle['fecha'] = detalle['fecha'].strftime('%d/%m/%Y')  # Formatear la fecha a DD/MM/YYYY
 
-        for asig in asignaciones:
-            if asig['fk_id_verificion_vehiculos'] in verificacion:
-                verificacion[asig['fk_id_verificion_vehiculos']] = True
+            # Obtener las asignaciones de verificación previa para cada detalle
+            query_asignaciones = "SELECT fk_id_verificion_vehiculos FROM asignacion_detalles_condiciones_sanitarias_vehiculos WHERE fk_id_detalle_condicion_sanitaria_vehiculo = %s"
+            asignaciones = execute_query(query_asignaciones, (detalle['id_detalle_condicion_sanitaria_vehiculo_transporte'],))
 
-        # Añadir las asignaciones al detalle
-        detalle['verificacion_vehiculos'] = verificacion
-        detalles_formateados.append(detalle)
+            verificacion = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}
 
-    pprint.pprint(detalles_formateados)
+            for asig in asignaciones:
+                if asig['fk_id_verificion_vehiculos'] in verificacion:
+                    verificacion[asig['fk_id_verificion_vehiculos']] = True
+
+            # Añadir las asignaciones al detalle
+            detalle['verificacion_vehiculos'] = verificacion
+            detalles_formateados.append(detalle)
+        info[name] = detalles_formateados
+    # pprint.pprint(info)
 
     # Extraer datos de la cabecera
-    month=cabecera[0]['mes']
-    month_name=MESES_BY_NUM.get(int(month)).capitalize()
     year=cabecera[0]['anio']
     format_code=cabecera[0]['codigo']
     format_frequency=cabecera[0]['frecuencia']
@@ -341,8 +351,8 @@ def download_formato():
         format_code_report=format_code,
         frecuencia_registro=format_frequency,
         logo_base64=logo_base64,
-        info=detalles_formateados,
-        month=month_name,
+        info=info,
+        month=month_name.capitalize(),
         year=year
     )
 
