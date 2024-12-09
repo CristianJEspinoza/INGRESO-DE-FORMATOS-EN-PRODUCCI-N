@@ -149,6 +149,10 @@
                                 onclick="downloadFormats('{{ grupo.fecha }}')">
                                 <i class="fas fa-file-download"></i> Descargar formato
                             </button>
+                            <a href="{{ url_for('monitoreoAgua.download_formato', formato_id=grupo.id_header_format) }}"
+                                class="btn btn-warning btn-sm btn-block mb-2" style="background-color: #FF8C00; color: white;">
+                                <i class="fas fa-download"></i> Descargar Formato
+                            </a>
                         </div>
                     </div>
                     <div id="collapse{{ grupo.fecha }}" class="collapse" aria-labelledby="heading{{ grupo.fecha }}" data-parent="#accordionFinalizados">
