@@ -13,18 +13,18 @@
             </tr>
             <!-- Información subtitulo -->
             <tr>
-                <td><b>Criterios:</b></td>
-                <td colspan="11">Min. 0.50 ppm &nbsp; Máx: 1.50 ppm &nbsp; de cloro residual</td>
+                <td><b>Fecha:</b></td>
+                <td colspan="11">{{ fecha_monitoreo }}</td>
             </tr>
-
+            <tr>
+                <td><b>EMPRESA EJECUTORA:</b></td>
+                <td colspan="11">{{ laboratorio }}</td>
+            </tr>
             <!-- Cabecera del cuerpo del reporte -->
             <tr class="border">
-                <th class="border">FECHA</th>
-                <th class="border">HORA</th>
-                <th class="border">LECTURA</th>
+                <th class="border">DESCRIPCION</th>
+                <th class="border">RESULTADOS</th>
                 <th class="border W-25">OBSERVACIONES</th>
-                <th class="border W-25">ACCIONES CORRECTIVAS</th>
-                <th class="border w-15">V° B°</th>
             </tr>
         </thead>
 
@@ -32,12 +32,9 @@
         <tbody class="body-content">
             {% for record in info %}
                 <tr class="text-center">
-                    <td>{{record['fecha']}}</td>
-                    <td>{{record['hora']}}</td>
-                    <td>{{record['lectura']}}</td>
+                    <td>{{record['detalle_control']}}</td>
+                    <td>{{record['resultado']}} &nbsp; {{record['unidad']}}</td>
                     <td>{{record['observacion']}}</td>
-                    <td>{{record['detalle_accion_correctiva']}}</td>
-                    <td>{{record['estado_accion_correctiva']}}</td>
                 </tr>
             {% endfor %}
 

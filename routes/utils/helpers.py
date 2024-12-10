@@ -62,7 +62,7 @@ def get_cabecera_formato_v2(fk_id_header_format: int) -> list:
     """
     # Construir la consulta SQL usando headers_formats como intermediaria
     query = f"""
-        SELECT tf.idtipoformato, tf.nombreformato, tf.frecuencia, tf.codigo, hf.id_header_format, hf.mes, hf.anio
+        SELECT tf.idtipoformato, tf.nombreformato, tf.frecuencia, tf.codigo, hf.id_header_format, hf.mes, hf.anio, hf.laboratorio
         FROM tiposformatos tf
         INNER JOIN headers_formats hf ON tf.idtipoformato = hf.fk_idtipoformatos
         WHERE hf.id_header_format = %s
