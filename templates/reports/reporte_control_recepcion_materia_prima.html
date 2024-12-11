@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% include "reports/head_report.html" %}
+<body>
+    <table class="main-table">
+        <!-- Encabezado del reporte -->
+        <thead>
+            <tr>
+                <td colspan="13">
+                    {% include "reports/header_component.html" %}
+                </td>
+            </tr>
+            <!-- Información subtitulo -->
+            <tr>
+                <td colspan="13">
+                    <table class="body-table s3">
+                        <tr>
+                            <th style="line-height: 10pt;">RESPONSABLE INSPECCIÓN</th>
+                            <td colspan="12">Juan Mendez</td>
+                        </tr>
+                        <tr>
+                            <th style="line-height: 10pt;">PARÁMETROS</th>
+                            <td colspan="12">Correcta limpieza de manos (uñas cortas y manos limpias)</td>
+                        </tr>
+                        <tr>
+                            <th style="line-height: 10pt;">Frecuencia</th>
+                            <td colspan="12">{{frecuencia_registro}}</td>
+                        </tr>
+                        <tr>
+                            <th rowspan="2" style="line-height: 10pt;">Nivel de Aceptación y rechazo</th>
+                            <th rowspan="2" style="line-height: 10pt;">Materia prima, Insumos, Productos de limpieza y Materiales</th>
+                            <td><b>Cumple: (C)</b> Exento de materias extrañas y suciedad. Embalado que impida la exposición al medio ambiente, rotulación
+                                adecuada (cantidad,contenido,fecha de elaboración,N° de lote, proveedor).</td>
+                        </tr>
+                        <tr>
+                            <td><b>No cumple: (NC)</b> Presencia de materia extraña y suciedad, presencia de perforaciones, embalaje deficiente, rotulacion
+                                incompleta. Producto no corresponde a lo solicitado.</td>
+                        </tr>
+                        <tr>
+                            <th style="line-height: 10pt;">Acciones Correctivas (AC)</th>
+                            <td colspan="12">1. Rechazo del producto &emsp; 2. Recepcionar con reparos</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <!-- Cabecera del cuerpo del reporte -->
+            <tr>
+                <td>FECHA:</th>
+                <td>{{fecha_control}}</th>
+            </tr>
+            <tr class="border">
+                <th class="border" rowspan="3">PRODUCTO RECIBIDO</th>
+                <th class="border" colspan="2">DATOS DEL PROVEEDOR</th>
+                <th class="border" colspan="4">DATOS DEL PRODUCTO</th>
+                <th class="border" colspan="4">CONTROLES DE CALIDAD</th>
+                <th class="border">RESULTADO FINAL</th>
+                <th class="border" rowspan="3">OBSERVACIONES</th>
+            </tr>
+            <tr>
+                <th  class="border s3" rowspan="2">Razón Social</th>
+                <th  class="border s3" rowspan="2">N° Factura / Boleta / Guía</th>
+                <th  class="border s3" rowspan="2">Lote</th>
+                <th  class="border s3" rowspan="2">Cantidad (Kg/Sacos)</th>
+                <th  class="border s3" rowspan="2">F. Producción</th>
+                <th  class="border s3" rowspan="2">F. Vencimiento</th>
+                <th  class="border s3">F.T.</th>
+                <th  class="border s3">C.C.</th>
+                <th  class="border s3">Color</th>
+                <th  class="border s3">Olor</th>
+                <th class="border s3" rowspan="2">Acept (a) / Rechaz (R)</th>
+            </tr>
+            <tr>
+                <th class="border s3">Si (&#x2713;)<br/>No (X)</th>
+                <th class="border s3">Si (&#x2713;)<br/>No (X)</th>
+                <th class="border s3">Si (&#x2713;)<br/>No (X)</th>
+                <th class="border s3">Si (&#x2713;)<br/>No (X)</th>
+            </tr>
+        </thead>
+
+        <!-- Cuerpo del reporte -->
+        <tbody class="body-content">
+            {% for record in info %}
+                <tr class="text-center">
+                    <td>{{record['producto_recibido']}}</td>
+                    <td>{{record['razon_social']}}</td>
+                    <td>{{record['nro_documento']}}</td>
+                    <td>{{record['lote']}}</td>
+                    <td>{{record['cantidad']}}</td>
+                    <td>{{record['fecha_produccion']}}</td>
+                    <td>{{record['fecha_vencimiento']}}</td>
+                    {% if record['ft'] is none %}
+                        <td class="text-center"></td>
+                    {% elif record['ft'] == True %}
+                        <td class="text-center">&#x2713;</td>
+                    {% else %}
+                        <td class="text-center">X</td>
+                    {% endif %}
+
+                    {% if record['cc'] is none %}
+                        <td class="text-center"></td>
+                    {% elif record['cc'] == True %}
+                        <td class="text-center">&#x2713;</td>
+                    {% else %}
+                        <td class="text-center">X</td>
+                    {% endif %}
+
+                    {% if record['color'] is none %}
+                        <td class="text-center"></td>
+                    {% elif record['color'] == True %}
+                        <td class="text-center">&#x2713;</td>
+                    {% else %}
+                        <td class="text-center">X</td>
+                    {% endif %}
+
+                    {% if record['olor'] is none %}
+                        <td class="text-center"></td>
+                    {% elif record['olor'] == True %}
+                        <td class="text-center">&#x2713;</td>
+                    {% else %}
+                        <td class="text-center">X</td>
+                    {% endif %}
+                    <td>{{record['resultado_final']}}</td>
+                    <td>{{record['observacion']}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+        <!-- Pie del reporte -->
+        <tfoot>
+            <tr>
+                <td colspan="12" style="padding-top: 25pt;">
+                    {% include "reports/footer_component.html" %}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>
