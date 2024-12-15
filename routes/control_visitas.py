@@ -9,24 +9,24 @@ from .utils.helpers import image_to_base64
 from .utils.helpers import generar_reporte
 from .utils.helpers import get_cabecera_formato_v2
 
-verificacion_calibracion_equipos = Blueprint('verificacion_calibracion_equipos', __name__)
+control_visitas = Blueprint('control_visitas', __name__)
 
-@verificacion_calibracion_equipos.route('/')
+@control_visitas.route('/')
 # @login_require
 def index():
     try:
-        print("Home verificacion_calibracion_equipos")
+        print("Home control_visitas")
 
     except Exception as e:
         print(f"Error al obtener datos: {e}")
-        return render_template('monitoreo_agua.html')
+        # return render_template('monitoreo_agua.html')
 
 
 #Para descargar el formato
-@verificacion_calibracion_equipos.route('/download_formato', methods=['GET'])
+@control_visitas.route('/download_formato', methods=['GET'])
 def download_formato():
     # Obtener el id del trabajador de los argumentos de la URL
-    print("verificacion_calibracion_equipos...")
+    print("control_visitas...")
     print(request.args)
     id_header_format = request.args.get('formato_id')
 
@@ -43,12 +43,15 @@ def download_formato():
 
     detalle_registros = [
         {
-            'equipo': 'Equipo 1',
-            'fecha_mantenimiento': '2024-12-01',
-            'fecha_proximo_mantenimiento': '2025-03-01',
-            'actividad_realizada': 'Actividad 1',
-            'observacion': 'Observación 1',
-            'responsable': 'Responsable 1'
+            'fecha': '2024-12-01',
+            'nombres_apellidos': 'Nombres y apellidos 1',
+            'dni': '47518569',
+            'empresa': 'Empresa e inst 1',
+            'hora_ingreso': '09:10',
+            'hora_salida': '10:00',
+            'eva_h': True, # Higiene
+            'eva_es': True, # estado de salud
+            'eva_u': True
         }
     ]
     # Extraer datos de la cabecera
@@ -65,7 +68,7 @@ def download_formato():
 
     # Renderiza la plantilla
     template = render_template(
-        "reports/reporte_verificacion_calibracion_equipos.html",
+        "reports/reporte_control_visitas.html",
         title_manual=BPM,
         title_report=title_report,
         format_code_report=format_code,
