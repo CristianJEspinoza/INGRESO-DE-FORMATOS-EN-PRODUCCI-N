@@ -22,6 +22,8 @@ from routes.control_cloro_residual_agua import controlCloroResidual
 from routes.condiciones_sanitarias_vehiculos import condiciones_sanitarias_vehiculos
 from routes.monitoreo_calidad_agua import monitoreoAgua
 
+from routes.verificacion_calibracion_equipos import verificacion_calibracion_equipos
+
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 
@@ -45,11 +47,13 @@ app.register_blueprint(controlCloroResidual, url_prefix = '/control_cloro_residu
 app.register_blueprint(condiciones_sanitarias_vehiculos, url_prefix = '/condiciones_sanitarias_vehiculos')
 app.register_blueprint(monitoreoAgua, url_prefix = '/monitoreo_agua')
 
+app.register_blueprint(verificacion_calibracion_equipos, url_prefix='/verificacion_calibracion_equipos')
+
 # Definiendo la ruta por defecto
 @app.route('/')
 def default():
     return redirect('/home')
 
 if __name__ == '__main__':
-    # app.run(host='0.0.0.0', port=5000, debug=True)
-    app.run()
+    app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run()
