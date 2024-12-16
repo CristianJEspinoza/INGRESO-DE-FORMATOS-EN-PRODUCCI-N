@@ -168,6 +168,7 @@ SELECT
 	ce.id_detalle_registro_controles_envasados,
 	t.nombres || ' ' || t.apellidos AS responsable,
 	p.idproducto,
+	p.codigo_product,
 	p.descripcion_producto,
 	ce.cantidad_producida,
 	pr.nom_empresa,
