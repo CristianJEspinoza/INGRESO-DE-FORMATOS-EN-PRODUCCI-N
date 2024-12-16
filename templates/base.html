@@ -124,7 +124,7 @@
                     </div>
                 </li>
             </ul>
-            
+
             <form class="form-inline my-2 my-lg-0 ml-auto">
                 <div class="input-group">
                     <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
@@ -133,12 +133,21 @@
                     </div>
                 </div>
             </form>
+
+            <!-- Contenedor para usuario y sesión -->
+            <div class="d-flex align-items-center ml-4">
+                {% if g.user %}
+                    <span class="text-white mr-2">USER: {{ g.user }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm">
+                        Cerrar sesión
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
     <div class="container-fluid mt-4" style="padding-top: 70px;"> <!-- Agregar padding-top para evitar superposición con la navbar -->
         {% block content %}
-        
         {% endblock %}
     </div>
 
@@ -169,5 +178,8 @@
 <!-- JS de Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/toasts.js') }}"></script>
+{% block script %}
+{% endblock %}
 </body>
 </html>

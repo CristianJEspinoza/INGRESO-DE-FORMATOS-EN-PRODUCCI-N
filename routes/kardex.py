@@ -2,6 +2,7 @@ import os
 import io
 import zipfile
 from flask import Blueprint, render_template, request, jsonify, send_file
+from auth.auth import login_require
 from connection.database import execute_query
 from datetime import datetime
 from .utils.constans import BPM
@@ -13,6 +14,7 @@ from .utils.helpers import get_ultimo_dia_laboral_del_mes
 kardex = Blueprint('kardex', __name__)
 
 @kardex.route('/', methods=['GET', 'POST'])
+@login_require
 def kardex_info():
     if request.method == 'GET':
         try:

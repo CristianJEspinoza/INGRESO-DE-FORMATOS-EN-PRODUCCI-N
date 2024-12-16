@@ -1,11 +1,22 @@
+import os
 from flask import Blueprint, render_template, request, jsonify, send_file
-from connection.database import execute_query
+from auth.auth import login_require
 from datetime import datetime
-from datetime import time
+
+from connection.database import execute_query
+from .utils.constans import MESES
+from .utils.constans import POES
+from .utils.helpers import image_to_base64
+from .utils.helpers import generar_reporte
+from .utils.helpers import get_cabecera_formato_v2
+
+import pprint
+
 
 condiciones_sanitarias_vehiculos = Blueprint('condiciones_sanitarias_vehiculos', __name__)
 
 @condiciones_sanitarias_vehiculos.route('/', methods=['GET', 'POST'])
+@login_require
 def condicionesSanitariasVehiculos():
     if request.method == 'GET':
         try:
@@ -14,7 +25,7 @@ def condicionesSanitariasVehiculos():
             areas = execute_query(query_areas)
             
             #Obtener todos los registros activos de este formatos
-            query_creados_CSV = "SELECT id_header_format, detalle_area, mes, anio, fk_idarea, estado FROM v_headers_formats WHERE estado = 'CREADO' AND fk_idtipoformatos = 12;" 
+            query_creados_CSV = "SELECT id_header_format, detalle_area, mes, anio, fk_idarea, estado FROM v_headers_formats WHERE estado = 'CREADO' AND fk_idtipoformatos = 12;"
             headers_formats = execute_query(query_creados_CSV)
             
             #Extraer los motivos para mostrarlos en un selector
@@ -88,7 +99,7 @@ def condicionesSanitariasVehiculos():
                 total_pages = (total_count + per_page - 1) // per_page
             else:
                 total_pages = 1  # Solo una "página" si estamos en modo de filtro
-            
+
             return render_template('condiciones_sanitarias_vehiculos.html',
                                     areas=areas,
                                     headers_formats=headers_formats,
@@ -137,6 +148,7 @@ def detalles_condiciones_ambientales(id_header_format):
     query_detalle_CA = "SELECT * FROM v_detalle_condiciones_vehiculos WHERE fk_id_header_format = %s ORDER BY fecha DESC"
     detalle_CSV = execute_query(query_detalle_CA, (id_header_format,))
 
+    print(detalle_CSV)
     # Obtener las asignaciones de verificación previa para cada detalle
     detalles_formateados = []
 
@@ -158,6 +170,7 @@ def detalles_condiciones_ambientales(id_header_format):
         detalle['verificacion_vehiculos'] = verificacion
         detalles_formateados.append(detalle)
 
+    pprint.pprint(detalles_formateados)
     return jsonify(detalles_formateados)
 
 @condiciones_sanitarias_vehiculos.route('/registrar_condiciones_vehiculos', methods=['POST'])
@@ -272,3 +285,77 @@ def finalizar_Detalles_CSV():
     except Exception as e:
         print(f"Error al agregar detalle de kardex: {e}")
         return jsonify({'status': 'error', 'message': 'Ocurrió un error al registrar el formato.'}), 500
+
+
+@condiciones_sanitarias_vehiculos.route('/download_formato', methods=['GET'])
+def download_formato():
+    # Obtener el id del trabajador de los argumentos de la URL
+    month_name = request.args.get('month')
+    month = MESES[month_name.lower()]
+
+    query_header_and_area = f"""SELECT id_header_format, a.detalle_area
+                                FROM public.headers_formats hf 	LEFT JOIN areas a ON hf.fk_idarea = a.idarea
+                                WHERE fk_idtipoformatos = 12 AND mes = '%s'"""
+    list_header_formats_with_area = execute_query(query_header_and_area, (month,))
+
+    id_header_format_to_cabecera=list_header_formats_with_area[0]['id_header_format']
+    cabecera = get_cabecera_formato_v2(id_header_format_to_cabecera)
+
+    info = {}
+    # list_header_formats = [ RealDictRow([('id_header_format', 14), ('detalle_area', 'Materias Primas')]), RealDictRow([('id_header_format', 2), ('detalle_area', 'Envases y Embalajes')])]
+    for row in list_header_formats_with_area:
+        name = row['detalle_area']
+        id_header_format = row['id_header_format']
+
+        query_detalle_CA = "SELECT * FROM v_detalle_condiciones_vehiculos WHERE fk_id_header_format = %s ORDER BY fecha DESC"
+        detalle_CSV = execute_query(query_detalle_CA, (id_header_format,))
+
+        # Obtener las asignaciones de verificación previa para cada detalle
+        detalles_formateados = []
+
+        for detalle in detalle_CSV:
+            # Formatear la fecha
+            detalle['fecha'] = detalle['fecha'].strftime('%d/%m/%Y')  # Formatear la fecha a DD/MM/YYYY
+
+            # Obtener las asignaciones de verificación previa para cada detalle
+            query_asignaciones = "SELECT fk_id_verificion_vehiculos FROM asignacion_detalles_condiciones_sanitarias_vehiculos WHERE fk_id_detalle_condicion_sanitaria_vehiculo = %s"
+            asignaciones = execute_query(query_asignaciones, (detalle['id_detalle_condicion_sanitaria_vehiculo_transporte'],))
+
+            verificacion = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}
+
+            for asig in asignaciones:
+                if asig['fk_id_verificion_vehiculos'] in verificacion:
+                    verificacion[asig['fk_id_verificion_vehiculos']] = True
+
+            # Añadir las asignaciones al detalle
+            detalle['verificacion_vehiculos'] = verificacion
+            detalles_formateados.append(detalle)
+        info[name] = detalles_formateados
+    # pprint.pprint(info)
+
+    # Extraer datos de la cabecera
+    year=cabecera[0]['anio']
+    format_code=cabecera[0]['codigo']
+    format_frequency=cabecera[0]['frecuencia']
+
+    # Generar Template para reporte
+    logo_path = os.path.join('static', 'img', 'logo.png')
+    logo_base64 = image_to_base64(logo_path)
+    title_report = cabecera[0]['nombreformato']
+
+    # Renderiza la plantilla
+    template = render_template(
+        "reports/reporte_control_condiciones_sanitarias_vehiculos.html",
+        title_manual=POES,
+        title_report=title_report,
+        format_code_report=format_code,
+        frecuencia_registro=format_frequency,
+        logo_base64=logo_base64,
+        info=info,
+        month=month_name.capitalize(),
+        year=year
+    )
+
+    # Generar el nombre del archivo usando las variables de fecha
+    file_name = f"{title_report.replace(' ', '-')}--{month_name}--{year}--F"
+    return generar_reporte(template, file_name, orientation="landscape")

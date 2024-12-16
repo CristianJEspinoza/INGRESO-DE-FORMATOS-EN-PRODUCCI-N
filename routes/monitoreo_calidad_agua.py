@@ -1,10 +1,18 @@
+import os
 from flask import Blueprint, render_template, request, jsonify, send_file
+from auth.auth import login_require
 from connection.database import execute_query
 from datetime import datetime
+from .utils.constans import MESES_BY_NUM
+from .utils.constans import POES
+from .utils.helpers import image_to_base64
+from .utils.helpers import generar_reporte
+from .utils.helpers import get_cabecera_formato_v2
 
 monitoreoAgua = Blueprint('monitoreoAgua', __name__)
 
 @monitoreoAgua.route('/')
+@login_require
 def monitoreo_agua():
     try:
         # Obtener el formato creado con el id de formato 11
@@ -47,16 +55,15 @@ def monitoreo_agua():
                                         'detection_limit', detection_limit,
                                         'resultado', resultado
                                     )
-                                ) AS registros
+                                ) AS registros,
+                                id_header_format
                             FROM v_detalles_monitoreos_calidad_agua
                             {filter_conditions}
-                            GROUP BY fecha, estado
+                            GROUP BY fecha, estado, id_header_format
                             ORDER BY fecha
                             {limit_offset_clause}"""
         
         finalizados = execute_query(query_finalizados)
-        
-        print(finalizados)
         
         # Si no hay filtro de fecha, contar el total de páginas
         if not filter_date:
@@ -136,6 +143,53 @@ def guardar_formato_calidad_agua():
     except Exception as e:
         print(f"Error al guardar el registro: {e}")
         return jsonify({'status': 'error', 'message': 'Hubo un error al guardar el registro'}), 500
+
+#Para descargar el formato
+@monitoreoAgua.route('/download_formato', methods=['GET'])
+def download_formato():
+    # Obtener el id del trabajador de los argumentos de la URL
+    print(request.args)
+    id_header_format = request.args.get('formato_id')
+
+    cabecera = get_cabecera_formato_v2(id_header_format)
+
+    print('cabecera', cabecera)
+
+    # Realizar la consulta para el detalle de todos los registros y controles de envasados finalizados
+    detalle_registros = execute_query(
+        f"""SELECT
+            resultado, observaciones, detalle_control, unidad, estado, fecha
+        FROM v_detalles_monitoreos_calidad_agua WHERE id_header_format = {id_header_format} AND estado = 'CERRADO' ORDER BY fecha;"""
+    )
+
+    # Extraer datos de la cabecera
+    month=cabecera[0]['mes']
+    month_name=MESES_BY_NUM.get(int(month)).capitalize()
+    year=cabecera[0]['anio']
+    format_code=cabecera[0]['codigo']
+    format_frequency=cabecera[0]['frecuencia']
+
+    # Generar Template para reporte
+    logo_path = os.path.join('static', 'img', 'logo.png')
+    logo_base64 = image_to_base64(logo_path)
+    title_report = cabecera[0]['nombreformato']
+
+    # Renderiza la plantilla
+    template = render_template(
+        "reports/reporte_monitoreo_calidad_agua.html",
+        title_manual=POES,
+        title_report=title_report,
+        format_code_report=format_code,
+        frecuencia_registro=format_frequency,
+        logo_base64=logo_base64,
+        laboratorio=cabecera[0]['laboratorio'],
+        fecha_monitoreo=detalle_registros[0]['fecha'].strftime('%Y-%m-%d'),
+        info=detalle_registros
+    )
+
+    # Generar el nombre del archivo usando las variables de fecha
+    file_name = f"{title_report.replace(' ', '-')}--{month_name}--{year}--F"
+    return generar_reporte(template, file_name)
 
 #Finalizar el registro
 @monitoreoAgua.route('/finalizar_registro', methods=['POST'])

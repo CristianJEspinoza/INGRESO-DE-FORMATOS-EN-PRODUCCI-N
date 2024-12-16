@@ -1,26 +1,34 @@
-# Utiliza una imagen base de Python en Alpine
-FROM python:alpine3.18
+FROM python:3.11.9-slim
 
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
+WORKDIR /home/app
 
-# Copia el archivo requirements.txt al contenedor
 COPY requirements.txt .
 
-# Instala las dependencias necesarias del sistema y Python
-RUN \
- apk add --no-cache python3 postgresql-libs && \
- apk add --no-cache --virtual .build-deps gcc python3-dev musl-dev postgresql-dev && \
- python3 -m pip install --upgrade pip && \
- python3 -m pip install -r requirements.txt --no-cache-dir && \
- apk --purge del .build-deps && \
- pip install gunicorn eventlet
+# Instala dependencias del sistema y la versión parcheada de wkhtmltopdf
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libxrender1 \
+    libxext6 \
+    libfontconfig1 \
+    fontconfig \
+    wget && \
+    # Descarga e instala libssl1.1 manualmente usando dpkg - Necesario para ver header y footer en el pdf creado con wkhtmltopdf
+    wget http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1n-0+deb10u3_amd64.deb && \
+    dpkg -i libssl1.1_1.1.1n-0+deb10u3_amd64.deb || apt-get -f install -y && \
+    rm libssl1.1_1.1.1n-0+deb10u3_amd64.deb && \
+    # Descarga e instala la versión parcheada de wkhtmltopdf
+    wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb || apt-get -f install -y && \
+    rm wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    # Configura caché de fuentes y limpia archivos temporales
+    fc-cache -f -v && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install gunicorn && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copia el resto de los archivos de la aplicación al contenedor
 COPY . .
 
-# Expone el puerto 5000 para la aplicación
 EXPOSE 5000
 
-# Ejecuta Gunicorn para correr la aplicación Flask usando el worker eventlet
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--worker-class", "eventlet", "--timeout", "300", "app:app"]
+CMD gunicorn --bind 0.0.0.0:5000 --log-level=debug --access-logfile=- app:app
+

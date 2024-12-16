@@ -1,6 +1,7 @@
 import os
 
 from flask import Blueprint, render_template, request, jsonify
+from auth.auth import login_require
 from connection.database import execute_query
 from datetime import datetime
 from collections import defaultdict
@@ -16,6 +17,7 @@ from .utils.helpers import get_ultimo_dia_laboral_del_mes
 lavadoMano = Blueprint('lavado_Manos', __name__)
 
 @lavadoMano.route('/', methods=['GET', 'POST'])
+@login_require
 def lavado_Manos():
     if request.method == 'GET':
         try:

@@ -5,9 +5,7 @@ import os
 def get_db_connection():
     try:
         host = os.getenv('host')
-        # database = os.getenv('database')
-        # database = 'PruebasProduccion'
-        database = 'IngresoFormatosProduccion'
+        database = os.getenv('database')
         user = os.getenv('user')
         password = os.getenv('password')
         port = os.getenv('port')
@@ -26,10 +24,23 @@ def get_db_connection():
 def execute_query(query, params=None):
     conn = get_db_connection()
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute(query, params)
-    result = cur.fetchall() if cur.description else None
-    conn.commit()
-    cur.close()
-    conn.close()
-    return result
+
+    try:
+        # Configurar la localización a español
+        cur.execute("SET lc_time = 'es_ES.utf8';")
+
+        # Ejecutar la consulta
+        cur.execute(query, params)
+        result = cur.fetchall() if cur.description else None
+        conn.commit()
+        return result
+
+    except psycopg2.Error as e:
+        print(f"Error al ejecutar la consulta: {e}")
+        conn.rollback()
+        raise
+
+    finally:
+        cur.close()
+        conn.close()
 

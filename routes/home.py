@@ -1,11 +1,13 @@
 from flask import Blueprint, render_template, jsonify, request, send_file
 import pandas as pd
 from io import BytesIO
+from auth.auth import login_require
 from connection.database import execute_query
 
 home = Blueprint('home', __name__)
 
 @home.route('/', methods=['GET'])
+@login_require
 def principal():
     productos = execute_query("""SELECT 
                                     ROW_NUMBER() OVER (ORDER BY idproducto) AS contador,
