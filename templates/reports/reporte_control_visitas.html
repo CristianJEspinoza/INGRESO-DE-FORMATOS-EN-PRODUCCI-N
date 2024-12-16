@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% include "reports/head_report.html" %}
+<body>
+    <table class="main-table">
+        <!-- Encabezado del reporte -->
+        <thead>
+            <tr>
+                <td colspan="12">
+                    {% include "reports/header_component.html" %}
+                </td>
+            </tr>
+            <!-- Cabecera del cuerpo del reporte -->
+            <tr class="border">
+                <th class="border">FECHA</th>
+                <th class="border">NOMBRES Y APELLIDOS</th>
+                <th class="border">N° DNI</th>
+                <th class="border">EMPRESA / INSTITUCIÓN</th>
+                <th class="border">H. INGRESO</th>
+                <th class="border">H. SALIDA</th>
+                <th class="border">EVALUACIÓN</th>
+                <th class="border">MOTIVO DE VISITA</th>
+                <th class="border">OBSERVCIÓN</th>
+                <th class="border">FIRMA</th>
+            </tr>
+        </thead>
+
+        <!-- Cuerpo del reporte -->
+        <tbody class="body-content">
+            {% for record in info %}
+                <tr class="text-center">
+                    <td>{{record['fecha']}}</td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="4" class="border-none">
+                    Frecuencia: {{ frecuencia_registro }}
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- Pie del reporte -->
+        <tfoot>
+            <tr>
+                <td colspan="12" style="padding-top: 25pt;">
+                    {% include "reports/footer_component.html" %}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>

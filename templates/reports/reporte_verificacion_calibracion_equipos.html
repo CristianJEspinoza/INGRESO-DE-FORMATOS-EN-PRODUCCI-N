@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% include "reports/head_report.html" %}
+<body>
+    <table class="main-table">
+        <!-- Encabezado del reporte -->
+        <thead>
+            <tr>
+                <td colspan="12">
+                    {% include "reports/header_component.html" %}
+                </td>
+            </tr>
+            <!-- Cabecera del cuerpo del reporte -->
+            <tr class="border">
+                <th class="border">EQUIPO</th>
+                <th class="border">FECHA DE MANTENIMIENTO</th>
+                <th class="border">FECHA DEL PROX. MANTENIMIENTO</th>
+                <th class="border">ACTIVIDAD REALIZADA</th>
+                <th class="border W-25">OBSERVACIONES</th>
+                <th class="border">RESPONSABLE</th>
+            </tr>
+        </thead>
+
+        <!-- Cuerpo del reporte -->
+        <tbody class="body-content">
+            {% for record in info %}
+                <tr class="text-center">
+                    <td>{{record['equipo']}}</td>
+                    <td>{{record['fecha_mantenimiento']}}</td>
+                    <td>{{record['fecha_proximo_mantenimiento']}}</td>
+                    <td>{{record['actividad_realizada']}}</td>
+                    <td>{{record['observacion']}}</td>
+                    <td>{{record['responsable']}}</td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="4" class="border-none">
+                    Frecuencia: {{ frecuencia_registro }}
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- Pie del reporte -->
+        <tfoot>
+            <tr>
+                <td colspan="12" style="padding-top: 25pt;">
+                    {% include "reports/footer_component.html" %}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>
