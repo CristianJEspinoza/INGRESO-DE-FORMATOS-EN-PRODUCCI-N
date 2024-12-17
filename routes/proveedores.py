@@ -12,14 +12,31 @@ from .utils.helpers import get_cabecera_formato_v2
 proveedores = Blueprint('proveedores', __name__)
 
 @proveedores.route('/')
-# @login_require
+@login_require
 def index():
     try:
-        print("Home proveedores")
-
+        # Obtener datos de proveedores
+        proveedores = execute_query(
+            """SELECT * FROM v_proveedores WHERE estado = 'CREADO'"""
+        )
+        
+        # Obtener detalles de los productos ofrecidos
+        detalles_productos_proveedores = execute_query(
+            """SELECT * FROM v_detalles_productos_proveedores;"""
+        )
+        
+        historial_proveedores = execute_query(
+            """SELECT * FROM v_proveedores WHERE estado = 'CERRADO' ORDER BY anio DESC"""
+        )
+        
+        return render_template('proveedores.html', 
+                                proveedores=proveedores, 
+                                detalles_productos_proveedores=detalles_productos_proveedores,
+                                historial_proveedores=historial_proveedores)
+    
     except Exception as e:
         print(f"Error al obtener datos: {e}")
-        return render_template('monitoreo_agua.html')
+        return render_template('proveedores.html')
 
 
 #Para descargar el formato
@@ -35,11 +52,11 @@ def download_formato():
     print('cabecera', cabecera)
 
     # Realizar la consulta para el detalle de todos los registros y controles de envasados finalizados
-    # detalle_registros = execute_query(
-    #     f"""SELECT
-    #         resultado, observaciones, detalle_control, unidad, estado, fecha
-    #     FROM v_detalles_monitoreos_calidad_agua WHERE id_header_format = {id_header_format} AND estado = 'CERRADO' ORDER BY fecha;"""
-    # )
+    detalle_registros = execute_query(
+        f"""SELECT * FROM 
+        v_proveedores 
+        WHERE fk_id_header_format = {id_header_format};"""
+    )
 
     detalle_registros = {
             'empresa': 'empresa 1',

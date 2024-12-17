@@ -686,3 +686,50 @@ JOIN
 -- PARA EL FORMATO DE PROVEEDORES
 
 SELECT * FROM public.proveedores
+
+SELECT * FROM public.asignaciones_provedores_header
+
+CREATE OR REPLACE VIEW v_proveedores AS 
+SELECT
+	a.id_asignacion_proveedores,
+	a.fk_id_proveedor,
+	p.nom_empresa,
+	d.departamento,
+	d.distrito,
+	d.provincia,
+	d.celular,
+	d.calle_pas_av,
+	d.numero_calle,
+	d.ruc AS ruc_domicilio,
+	d.correo_electronico,
+	r.dni,
+	r.ruc AS ruc_representante,
+	r.nombres,
+	r.apellidos,
+	r.cargo,
+	p.status,
+	p.comercial,
+	p.industrial,
+	p.tipo_empresa,
+	a.fk_id_header_format,
+	h.anio,
+	h.estado
+FROM
+	asignaciones_provedores_header a
+JOIN
+	proveedores p ON p.idproveedor = a.fk_id_proveedor
+JOIN
+	headers_formats h ON h.id_header_format = a.fk_id_header_format
+JOIN
+	domicilios_legales d ON d.iddomiciliolegal = p.fk_iddomiciliolegal
+JOIN
+	representantes_legales r ON r.idrepresentantelegal = p.fk_idrepresentantelegal;
+	
+
+DROP VIEW v_proveedores
+	
+SELECT * FROM v_proveedores
+
+SELECT * FROM public.headers_formats
+
+SELECT * FROM public.detalles_productos_proveedores

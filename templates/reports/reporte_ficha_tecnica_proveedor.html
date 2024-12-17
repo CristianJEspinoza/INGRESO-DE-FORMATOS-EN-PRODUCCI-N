@@ -22,7 +22,7 @@
                 <td colspan="12" class="header-red">IDENTIFICACIÓN DEL PROVEEDOR</td>
             </tr>
             <tr>
-                <td colspan="12"><b>Empresa:</b> {{info['empresa']}}</td>
+                <td colspan="12"><b>Empresa:</b> {{info['nom_empresa']}}</td>
             </tr>
 
             <tr>
@@ -35,17 +35,35 @@
                 <td colspan="12">Distrito: {{info['distrito']}}</td>
             </tr>
             <tr>
+                <td colspan="12">Provincia: {{info['provincia']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12">Celular: {{info['celular']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12">Calle / Pasaje / Av.: {{info['calle_pas_av']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12">N°: {{info['numero_calle']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12">N° de RUC: {{info['ruc_domicilio']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12">Correo Electrónico: {{info['correo_electronico']}}</td>
+            </tr>
+            <tr>
                 <td colspan="12" class="header-red">IDENTIFICACIÓN DEL REPRESENTANTE LEGAL</td>
             </tr>
             <tr>
-                <td colspan="12">Nombre y Apellido: {{info['representante_nombre']}}</td>
+                <td colspan="12">Nombre y Apellido: {{info['nombres']}} {{info['apellidos']}}</td>
             </tr>
             <tr>
-                <td colspan="12">Cargo: {{info['representante_cargo']}}</td>
+                <td colspan="12">Cargo: {{info['cargo']}}</td>
             </tr>
             <tr>
-                <td>N° DNI: {{info['representante_dni']}}</td>
-                <td>N° de RUC: 20125478965</td>
+                <td>N° DNI: {{info['dni']}}</td>
+                <td>N° de RUC: {{info['ruc_representante']}}</td>
                 <td colspan="10"></td>
             </tr>
 
@@ -122,15 +140,15 @@
             </tr>
             <tr>
                 <td>COMERCIAL</td>
-                <td colspan="11">Mayorista</td>
+                <td colspan="11">{{info['comercial']}}</td>
             </tr>
             <tr>
                 <td>INDUSTRIAL</td>
-                <td colspan="11">Nacional</td>
+                <td colspan="11">{{info['industrial']}}</td>
             </tr>
             <tr>
                 <td>TIPO DE EMPRESA</td>
-                <td colspan="11">Micro empresa</td>
+                <td colspan="11">{{info['tipo_empresa']}}</td>
             </tr>
             <tr>
                 <td colspan="12" class="border-none">
@@ -139,7 +157,7 @@
             </tr>
 
             <tr>
-                <td colspan="12" class="header-red">MODALIDAD DE OPERACIÓN</td>
+                <td colspan="12" class="header-red">CAPACIDAD DE PROVEER LOS BIENES OFERTADOS</td>
             </tr>
             <tr>
                 <td>DESCRIPCIÓN DEL PRODUCTO</td>

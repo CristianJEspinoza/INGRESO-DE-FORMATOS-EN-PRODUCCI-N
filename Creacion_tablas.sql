@@ -452,21 +452,29 @@ CREATE TABLE IF NOT EXISTS verificaciones_calibracion_equipos (
 
 -- PARA EL FORMATO DE FICHA TÉCNICA DEL PROVEEDOR
 
-ALTER TABLE public.headers_formats
-ADD COLUMN fk_idproveedor INT REFERENCES public.proveedores(idproveedor) NULL;
-
 ALTER TABLE public.proveedores
 ADD COLUMN status VARCHAR(20) NULL,
 ADD COLUMN comercial VARCHAR(45) NULL,
 ADD COLUMN industrial VARCHAR(45) NULL,
 ADD COLUMN tipo_empresa VARCHAR(45) NULL;
 
+CREATE TABLE IF NOT EXISTS asignaciones_provedores_header (
+	id_asignacion_proveedores SERIAL PRIMARY KEY,
+	fk_id_proveedor INT REFERENCES public.proveedores(idproveedor) NOT NULL,
+	fk_id_header_format INT REFERENCES public.headers_formats(id_header_format) NOT NULL
+)
+
 CREATE TABLE IF NOT EXISTS detalles_productos_proveedores (
 	iddetalle_producto_proveedor SERIAL PRIMARY KEY,
 	cantidad VARCHAR(45) NOT NULL,
 	frecuencia VARCHAR(45) NOT NULL,
-	fk_idproducto INT REFERENCES public.productos(idproducto) NOT NULL,
-	fk_idproveedor INT REFERENCES public.proveedores(idproveedor) NOT NULL
+	producto_proveedor VARCHAR(60) NOT NULL,
+	fk_id_asignacion_header INT REFERENCES asignaciones_provedores_header(id_asignacion_proveedores) NOT NULL
 );
 
+SELECT * FROM v_proveedores WHERE estado = 'CERRADO' ORDER BY anio
 
+SELECT * FROM public.headers_formats
+	
+ALTER TABLE public.detalles_productos_proveedores
+ADD COLUMN fk_id_asignacion_header INT REFERENCES asignaciones_provedores_header(id_asignacion_proveedores) NULL
