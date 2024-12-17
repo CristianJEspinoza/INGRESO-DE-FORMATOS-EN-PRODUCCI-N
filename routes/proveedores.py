@@ -78,7 +78,7 @@ def download_formato():
 
 #Para descargar el formato
 @proveedores.route('/download_formato_lista', methods=['GET'])
-def download_formato():
+def download_formato_k():
     # Obtener el id del trabajador de los argumentos de la URL
     print("Reporte proveedores...")
     print(request.args)

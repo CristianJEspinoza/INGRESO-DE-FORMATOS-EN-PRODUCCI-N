@@ -649,10 +649,7 @@ JOIN
 JOIN
 	public.tipos_controles_calidad_agua tc ON mc.fk_id_tipo_control_calidad_agua = tc.id_tipo_control_calidad_agua;
 
-DROP VIEW v_detalles_monitoreos_calidad_agua
 
-SELECT * FROM detalles_monitoreos_calidad_agua
-	
 SELECT
     fecha,
     estado,
@@ -670,7 +667,6 @@ WHERE estado = 'CERRADO'
 GROUP BY fecha, estado
 ORDER BY fecha;
 
-SELECT * FROM v_headers_formats
 	
 SELECT COUNT(*) AS total
 FROM (SELECT DISTINCT fecha 
@@ -678,23 +674,15 @@ FROM (SELECT DISTINCT fecha
 	WHERE estado = 'CERRADO') AS distinct_date;
 
 
-SELECT * FROM public.tiposformatos
-
-SELECT * FROM public.headers_formats
-	
-SELECT * FROM public.verificaciones_calibracion_equipos
-
 CREATE OR REPLACE VIEW v_verificaciones_calibracion_equipos AS
 SELECT
 	v.idverificacion_equipo, v.equipo, v.fecha_mantenimiento, v.fecha_prox_mantenimiento, v.actividad_realizada, 
-	v.observaciones, v.responsable, h.estado
+	COALESCE(v.observaciones, '-') AS observaciones, v.responsable, h.estado, h.id_header_format
 FROM
 	verificaciones_calibracion_equipos v
 JOIN
 	headers_formats h ON v.fk_id_header_format = h.id_header_format;
 
-SELECT * FROM v_verificaciones_calibracion_equipos
+-- PARA EL FORMATO DE PROVEEDORES
 
-SELECT * FROM public.categorias_limpieza_desinfeccion
-
-
+SELECT * FROM public.proveedores
