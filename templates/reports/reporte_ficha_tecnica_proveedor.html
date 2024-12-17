@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% include "reports/head_report.html" %}
+<body>
+    <table class="main-table">
+        <!-- Encabezado del reporte -->
+        <thead>
+            <tr>
+                <td colspan="12">
+                    {% include "reports/header_component.html" %}
+                </td>
+            </tr>
+            <tr>
+                <th  colspan="12"></th>
+            </tr>
+        </thead>
+
+        <!-- Cuerpo del reporte -->
+        <tbody class="body-content">
+            <tr>
+                <td colspan="12" class="header-red">IDENTIFICACIÓN DEL PROVEEDOR</td>
+            </tr>
+            <tr>
+                <td colspan="12"><b>Empresa:</b> {{info['empresa']}}</td>
+            </tr>
+
+            <tr>
+                <td colspan="12" class="header-red">DOMICILIO LEGAL</td>
+            </tr>
+            <tr>
+                <td colspan="12">Departamento: {{info['departamento']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12">Distrito: {{info['distrito']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12" class="header-red">IDENTIFICACIÓN DEL REPRESENTANTE LEGAL</td>
+            </tr>
+            <tr>
+                <td colspan="12">Nombre y Apellido: {{info['representante_nombre']}}</td>
+            </tr>
+            <tr>
+                <td colspan="12">Cargo: {{info['representante_cargo']}}</td>
+            </tr>
+            <tr>
+                <td>N° DNI: {{info['representante_dni']}}</td>
+                <td>N° de RUC: 20125478965</td>
+                <td colspan="10"></td>
+            </tr>
+
+            <tr>
+                <td colspan="12" class="header-red">CARTA DE PRESENTACIÓN</td>
+            </tr>
+            <tr>
+                <td class="text-center" style="background-color: silver;">Si</td>
+                <td class="text-center">No</td>
+                <td colspan="10"></td>
+            </tr>
+
+            <tr>
+                <td colspan="12" class="header-red">DOCUMENTOS ENTREGADOS</td>
+            </tr>
+            <tr>
+                <td colspan="4">Fichas Técnicas</td>
+                <td colspan="4" style="background-color: silver;" class="text-center">Si</td>
+                <td colspan="4" class="text-center">No</td>
+            </tr>
+            <tr>
+                <td colspan="4">Certificados de Calidad</td>
+                <td colspan="4" style="background-color: silver;" class="text-center">Si</td>
+                <td colspan="4" class="text-center">No</td>
+            </tr>
+            <tr>
+                <td colspan="4">Análisis o muestras de los productos</td>
+                <td colspan="4" style="background-color: silver;" class="text-center">Si</td>
+                <td colspan="4" class="text-center">No</td>
+            </tr>
+
+            <tr>
+                <td colspan="12" class="header-red">EVALUACIÓN</td>
+            </tr>
+            <tr>
+                <th colspan="3">Criterios</th>
+                <th colspan="3">Si</th>
+                <th colspan="3">No</th>
+                <th colspan="3">Observación</th>
+            </tr>
+            <tr>
+                <td colspan="3">a. Calidad del producto</td>
+                <td colspan="3" class="text-center">&#x2713;</td>
+                <td colspan="3"></td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td colspan="3">b. Condiciones del transporte y entrega</td>
+                <td colspan="3" class="text-center">&#x2713;</td>
+                <td colspan="3"></td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td colspan="3">c. Tiempo adecuado de entrega</td>
+                <td colspan="3" class="text-center">&#x2713;</td>
+                <td colspan="3"></td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td colspan="3">d. Inspección al almacén del proveedor</td>
+                <td colspan="3" class="text-center">&#x2713;</td>
+                <td colspan="3"></td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td colspan="3">e. Servicio Post-Venta</td>
+                <td colspan="3" class="text-center">&#x2713;</td>
+                <td colspan="3"></td>
+                <td colspan="3"></td>
+            </tr>
+
+            <tr>
+                <td colspan="12" class="header-red">MODALIDAD DE OPERACIÓN</td>
+            </tr>
+            <tr>
+                <td>COMERCIAL</td>
+                <td colspan="11">Mayorista</td>
+            </tr>
+            <tr>
+                <td>INDUSTRIAL</td>
+                <td colspan="11">Nacional</td>
+            </tr>
+            <tr>
+                <td>TIPO DE EMPRESA</td>
+                <td colspan="11">Micro empresa</td>
+            </tr>
+            <tr>
+                <td colspan="12" class="border-none">
+                    Frecuencia: {{ frecuencia_registro }}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="12" class="header-red">MODALIDAD DE OPERACIÓN</td>
+            </tr>
+            <tr>
+                <td>DESCRIPCIÓN DEL PRODUCTO</td>
+                <td>CANTIDAD</td>
+                <td colspan="10">FRECUENCIA</td>
+            </tr>
+            <tr>
+                <td>1.</td>
+                <td></td>
+                <td colspan="10"></td>
+            </tr>
+            <tr>
+                <td>2.</td>
+                <td></td>
+                <td colspan="10"></td>
+            </tr>
+            <tr>
+                <td>3.</td>
+                <td></td>
+                <td colspan="10"></td>
+            </tr>
+            <tr>
+                <td>4.</td>
+                <td></td>
+                <td colspan="10"></td>
+            </tr>
+            <tr>
+                <td>5.</td>
+                <td></td>
+                <td colspan="10"></td>
+            </tr>
+            <tr>
+                <td>6.</td>
+                <td></td>
+                <td colspan="10"></td>
+            </tr>
+
+        </tbody>
+
+        <!-- Pie del reporte -->
+        <tfoot>
+            <tr>
+                <td colspan="12" style="padding-top: 25pt;">
+                    {% include "reports/footer_component.html" %}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>
