@@ -23,7 +23,7 @@ def index():
 
 
 #Para descargar el formato
-@proveedores.route('/download_formato_ficha', methods=['GET'])
+@proveedores.route('/download_formato', methods=['GET'])
 def download_formato():
     # Obtener el id del trabajador de los argumentos de la URL
     print("Reporte proveedores...")
@@ -78,9 +78,9 @@ def download_formato():
 
 #Para descargar el formato
 @proveedores.route('/download_formato_lista', methods=['GET'])
-def download_formato():
+def download_formato_list():
     # Obtener el id del trabajador de los argumentos de la URL
-    print("Reporte proveedores...")
+    print("Reporte lista proveedores...")
     print(request.args)
     id_header_format = request.args.get('formato_id')
 
@@ -95,14 +95,15 @@ def download_formato():
     #     FROM v_detalles_monitoreos_calidad_agua WHERE id_header_format = {id_header_format} AND estado = 'CERRADO' ORDER BY fecha;"""
     # )
 
-    detalle_registros = {
-            'empresa': 'empresa 1',
-            'departamento': 'departamento 1',
-            'distrito': 'distrito 1',
-            'representante_nombre': 'Representante Legal 1',
-            'representante_cargo': 'Cargo 1',
-            'representante_dni': '47589685',
-        }
+    detalle_registros = [{
+            'producto': 'producto 1',
+            'razon_social': 'razon social',
+            'contacto': 'Contacto 1',
+            'celular': '942568547',
+            'correo': 'prov@gmail.com',
+            'ruc': '20475896852',
+            'direccion': 'direccion 1',
+        }]
     # Extraer datos de la cabecera
     month=cabecera[0]['mes']
     month_name=MESES_BY_NUM.get(int(month)).capitalize()
@@ -117,7 +118,7 @@ def download_formato():
 
     # Renderiza la plantilla
     template = render_template(
-        "reports/reporte_ficha_tecnica_proveedor.html",
+        "reports/reporte_lista_proveedores.html",
         title_manual=BPM,
         title_report=title_report,
         format_code_report=format_code,

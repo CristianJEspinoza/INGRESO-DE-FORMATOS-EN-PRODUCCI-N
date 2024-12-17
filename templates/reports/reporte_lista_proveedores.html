@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% include "reports/head_report.html" %}
+<body>
+    <table class="main-table">
+        <!-- Encabezado del reporte -->
+        <thead>
+            <tr>
+                <td colspan="12">
+                    {% include "reports/header_component.html" %}
+                </td>
+            </tr>
+
+            <!-- Cabecera del cuerpo del reporte -->
+            <tr class="border header-red">
+                <th class="border">N°</th>
+                <th class="border">Producto / Servicio</th>
+                <th class="border">Razón Social</th>
+                <th class="border">Contacto</th>
+                <th class="border">Celular</th>
+                <th class="border">Correo Electrónico</th>
+                <th class="border">RUC</th>
+                <th class="border">Dirección</th>
+            </tr>
+        </thead>
+
+        <!-- Cuerpo del reporte -->
+        <tbody class="body-content">
+            {% set total_rows = 10 %}
+            {% set records_count = info|length %}
+
+            {# Iterar sobre los registros y mostrarlos #}
+            {% for idx in range(records_count) %}
+            <tr>
+                <td>{{ idx + 1 }}</td>
+                <td class="text-center">{{ info[idx]['producto'] }}</td>
+                <td class="text-center">{{ info[idx]['razon_social'] }}</td>
+                <td class="text-center">{{ info[idx]['contacto'] }}</td>
+                <td class="text-center">{{ info[idx]['celular'] }}</td>
+                <td class="text-center">{{ info[idx]['correo'] }}</td>
+                <td class="text-center">{{ info[idx]['ruc'] }}</td>
+                <td class="text-center">{{ info[idx]['direccion'] }}</td>
+            </tr>
+            {% endfor %}
+
+            {% for idx in range(records_count + 1, total_rows + 1) %}
+            <tr>
+                <td>{{ idx }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="12" class="border-none">
+                    Frecuencia: {{ frecuencia_registro }}
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- Pie del reporte -->
+        <tfoot>
+            <tr>
+                <td colspan="12" style="padding-top: 25pt;">
+                    {% include "reports/footer_component.html" %}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>
