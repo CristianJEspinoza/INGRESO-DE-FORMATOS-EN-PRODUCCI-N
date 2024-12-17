@@ -98,7 +98,7 @@ def generar_reporte(template, filename_report='Reporte_sin_nombre', orientation=
         wkhtmltopdf_path = os.path.join('tools', 'wkhtmltox', 'bin', 'wkhtmltopdf.exe')
 
         # Detectar ruta de wkhtmltopdf, # Detecta automáticamente la ruta de wkhtmltopdf en docker
-        wkhtmltopdf_path = shutil.which("wkhtmltopdf")
+        # wkhtmltopdf_path = shutil.which("wkhtmltopdf")
         if wkhtmltopdf_path is None:
             raise FileNotFoundError("No se encontró wkhtmltopdf en el sistema. Por favor, instálalo o verifica su ruta.")
 

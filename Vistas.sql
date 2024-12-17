@@ -677,4 +677,24 @@ FROM (SELECT DISTINCT fecha
 	FROM v_detalles_monitoreos_calidad_agua
 	WHERE estado = 'CERRADO') AS distinct_date;
 
-select * from public.headers_formats
+
+SELECT * FROM public.tiposformatos
+
+SELECT * FROM public.headers_formats
+	
+SELECT * FROM public.verificaciones_calibracion_equipos
+
+CREATE OR REPLACE VIEW v_verificaciones_calibracion_equipos AS
+SELECT
+	v.idverificacion_equipo, v.equipo, v.fecha_mantenimiento, v.fecha_prox_mantenimiento, v.actividad_realizada, 
+	v.observaciones, v.responsable, h.estado
+FROM
+	verificaciones_calibracion_equipos v
+JOIN
+	headers_formats h ON v.fk_id_header_format = h.id_header_format;
+
+SELECT * FROM v_verificaciones_calibracion_equipos
+
+SELECT * FROM public.categorias_limpieza_desinfeccion
+
+

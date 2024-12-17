@@ -437,3 +437,16 @@ CREATE TABLE IF NOT EXISTS detalles_monitoreos_calidad_agua (
 	fk_id_header_format INT REFERENCES public.headers_formats(id_header_format) NOT NULL
 );
 
+-- FORMATO DE REGISTRO DE VERIFICACIÓN DE EQUIPOS
+
+CREATE TABLE IF NOT EXISTS verificaciones_calibracion_equipos (
+	idverificacion_equipo SERIAL PRIMARY KEY,
+	equipo VARCHAR(45) NOT NULL,
+	fecha_mantenimiento DATE NOT NULL,
+	fecha_prox_mantenimiento DATE NOT NULL,
+	actividad_realizada VARCHAR(100) NOT NULL,
+	observaciones VARCHAR(45) NULL,
+	responsable VARCHAR(45) NOT NULL,
+	fk_id_header_format INT REFERENCES public.headers_formats(id_header_format) NOT NULL
+);
+

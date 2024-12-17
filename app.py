@@ -22,7 +22,6 @@ from routes.control_cloro_residual_agua import controlCloroResidual
 from routes.condiciones_sanitarias_vehiculos import condiciones_sanitarias_vehiculos
 from routes.monitoreo_calidad_agua import monitoreoAgua
 from routes.control_recepcion_materia_prima import control_recepcion_materia_prima
-
 from routes.verificacion_calibracion_equipos import verificacion_calibracion_equipos
 
 app = Flask(__name__)
@@ -48,7 +47,6 @@ app.register_blueprint(controlCloroResidual, url_prefix = '/control_cloro_residu
 app.register_blueprint(condiciones_sanitarias_vehiculos, url_prefix = '/condiciones_sanitarias_vehiculos')
 app.register_blueprint(monitoreoAgua, url_prefix = '/monitoreo_agua')
 app.register_blueprint(control_recepcion_materia_prima, url_prefix = '/control_recepcion_materia_prima')
-
 app.register_blueprint(verificacion_calibracion_equipos, url_prefix='/verificacion_calibracion_equipos')
 
 # Definiendo la ruta por defecto

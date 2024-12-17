@@ -88,7 +88,7 @@ def monitoreo_agua():
     except Exception as e:
         print(f"Error al obtener datos: {e}")
         return render_template('monitoreo_agua.html')
-    
+
 #Función para generar el formato de monitoreo de la calidad de agua
 @monitoreoAgua.route('/generar_formato_MCA', methods=['POST'])
 def generar_formato_MCA():
