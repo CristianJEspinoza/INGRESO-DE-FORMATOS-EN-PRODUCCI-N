@@ -11,6 +11,14 @@ from .utils.helpers import get_cabecera_formato_v2
 
 control_recepcion_materia_prima = Blueprint('control_recepcion_materia_prima', __name__)
 
+@control_recepcion_materia_prima.route('/', methods=['GET'])
+@login_require
+def index():
+    
+    materias_primas = execute_query("SELECT * FROM v_recepciones_materias_primas WHERE estado = 'CREADO';")
+    
+    # Renderiza la plantilla
+    return render_template('control_recepcion_materia_prima.html', materias_primas=materias_primas)
 
 @control_recepcion_materia_prima.route('/download_formato', methods=['GET'])
 def download_formato():
