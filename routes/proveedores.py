@@ -2,7 +2,6 @@ import os
 from flask import Blueprint, render_template, request, jsonify, send_file
 from auth.auth import login_require
 from connection.database import execute_query
-from datetime import datetime
 from .utils.constans import MESES_BY_NUM
 from .utils.constans import BPM
 from .utils.helpers import image_to_base64
@@ -49,26 +48,81 @@ def download_formato():
 
     cabecera = get_cabecera_formato_v2(id_header_format)
 
-    print('cabecera', cabecera)
+    # print('cabecera', cabecera)
 
     # Realizar la consulta para el detalle de todos los registros y controles de envasados finalizados
-    detalle_registros = execute_query(
-        f"""SELECT * FROM 
-        v_proveedores 
+    registro = execute_query(
+        f"""SELECT
+                id_asignacion_proveedores,
+                fk_id_proveedor,
+                nom_empresa,
+                departamento,
+                distrito,
+                provincia,
+                celular,
+                calle_pas_av,
+                numero_calle,
+                ruc_domicilio,
+                correo_electronico,
+                dni,
+                ruc_representante,
+                nombres,
+                apellidos,
+                cargo,
+                status,
+                comercial,
+                industrial,
+                tipo_empresa,
+                fk_id_header_format,
+                anio,
+                estado
+            FROM
+            v_proveedores
         WHERE fk_id_header_format = {id_header_format};"""
     )
 
-    detalle_registros = {
-            'empresa': 'empresa 1',
-            'departamento': 'departamento 1',
-            'distrito': 'distrito 1',
-            'representante_nombre': 'Representante Legal 1',
-            'representante_cargo': 'Cargo 1',
-            'representante_dni': '47589685',
-        }
+    # Consulta para obtener los detalles de productos por registro
+    detalle_productos_por_registro = execute_query(
+        f"""SELECT
+                iddetalle_producto_proveedor,
+                cantidad,
+                frecuencia,
+                producto_proveedor,
+                fk_id_asignacion_header,
+                id_header_format
+            FROM public.v_detalles_productos_proveedores
+            WHERE id_header_format = {id_header_format};"""
+    )
+
+    # Transformar `registro` en un diccionario (si es necesario)
+    if isinstance(registro, list) and registro:
+        registro = registro[0]  # Suponiendo que siempre obtienes un solo registro
+
+    # Agregar detalle de productos al diccionario
+    registro['detalle_productos'] = detalle_productos_por_registro
+
+    # Construir el diccionario de información final
+    info = {
+        'nom_empresa': registro.get('nom_empresa', ''),
+        'departamento': registro.get('departamento', '').strip(),
+        'distrito': registro.get('distrito', '').strip(),
+        'provincia': registro.get('provincia', '').strip(),
+        'telefono': registro.get('telefono', ''),
+        'calle_pas_av': registro.get('calle_pas_av', ''),
+        'numero_calle': registro.get('numero_calle', ''),
+        'ruc_domicilio': registro.get('ruc_domicilio', ''),
+        'correo': registro.get('correo', ''),
+        'representante': f"{registro.get('nombres', '')}  {registro.get('apellidos', '')}",
+        'cargo': registro.get('cargo', ''),
+        'dni': registro.get('dni', ''),
+        'ruc_representante': registro.get('ruc_representante', ''),
+        'comercial': registro.get('comercial', ''),
+        'industrial': registro.get('industrial', ''),
+        'tipo_empresa': registro.get('tipo_empresa', ''),
+        'detalle_productos': registro.get('detalle_productos', [])
+    }
+
     # Extraer datos de la cabecera
-    month=cabecera[0]['mes']
-    month_name=MESES_BY_NUM.get(int(month)).capitalize()
     year=cabecera[0]['anio']
     format_code=cabecera[0]['codigo']
     format_frequency=cabecera[0]['frecuencia']
@@ -86,16 +140,17 @@ def download_formato():
         format_code_report=format_code,
         frecuencia_registro=format_frequency,
         logo_base64=logo_base64,
-        info=detalle_registros
+        info=info
     )
 
     # Generar el nombre del archivo usando las variables de fecha
-    file_name = f"{title_report.replace(' ', '-')}--{month_name}--{year}--F"
+    file_name = f"{title_report.replace(' ', '-')}--{year}--F"
     return generar_reporte(template, file_name)
 
-#Para descargar el formato
+
 @proveedores.route('/download_formato_lista', methods=['GET'])
 def download_formato_list():
+    # DEPRECATED by unused
     # Obtener el id del trabajador de los argumentos de la URL
     print("Reporte lista proveedores...")
     print(request.args)
