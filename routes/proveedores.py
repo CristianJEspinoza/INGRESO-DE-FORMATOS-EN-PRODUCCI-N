@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, render_template, request, jsonify, send_file
 from auth.auth import login_require
 from connection.database import execute_query
+from datetime import datetime
 from .utils.constans import MESES_BY_NUM
 from .utils.constans import BPM
 from .utils.helpers import image_to_base64
@@ -122,8 +123,10 @@ def download_formato():
         'detalle_productos': registro.get('detalle_productos', [])
     }
 
+    year=datetime.now().year
+    month=datetime.now().month
+    month_name = MESES_BY_NUM.get(int(month)).capitalize()
     # Extraer datos de la cabecera
-    year=cabecera[0]['anio']
     format_code=cabecera[0]['codigo']
     format_frequency=cabecera[0]['frecuencia']
 
@@ -144,7 +147,7 @@ def download_formato():
     )
 
     # Generar el nombre del archivo usando las variables de fecha
-    file_name = f"{title_report.replace(' ', '-')}--{year}--F"
+    file_name = f"{title_report.replace(' ', '-')}--{month_name}--{year}--F"
     return generar_reporte(template, file_name)
 
 

@@ -13,27 +13,53 @@
             </tr>
             <!-- Cabecera del cuerpo del reporte -->
             <tr class="border">
-                <th class="border">FECHA</th>
-                <th class="border">NOMBRES Y APELLIDOS</th>
-                <th class="border">N° DNI</th>
-                <th class="border">EMPRESA / INSTITUCIÓN</th>
-                <th class="border">H. INGRESO</th>
-                <th class="border">H. SALIDA</th>
-                <th class="border">EVALUACIÓN</th>
-                <th class="border">MOTIVO DE VISITA</th>
-                <th class="border">OBSERVCIÓN</th>
-                <th class="border">FIRMA</th>
+                <th class="border" rowspan="2">FECHA</th>
+                <th class="border" rowspan="2">NOMBRES Y APELLIDOS</th>
+                <th class="border" rowspan="2">N° DNI</th>
+                <th class="border" rowspan="2">EMPRESA / INSTITUCIÓN</th>
+                <th class="border" rowspan="2">H. INGRESO</th>
+                <th class="border" rowspan="2">H. SALIDA</th>
+                <th class="border" colspan="3">EVALUACIÓN</th>
+                <th class="border" rowspan="2">MOTIVO DE VISITA</th>
+                <th class="border" rowspan="2">OBSERVACIÓN</th>
+                <th class="border" rowspan="2">FIRMA</th>
+            </tr>
+            <tr>
+                <th class="border">H</th>
+                <th class="border">ES</th>
+                <th class="border">U</th>
             </tr>
         </thead>
 
         <!-- Cuerpo del reporte -->
         <tbody class="body-content">
-            {% for record in info %}
-                <tr class="text-center">
-                    <td>{{record['fecha']}}</td>
-                </tr>
-            {% endfor %}
 
+            {% for i in range(15) %}
+            <tr>
+                <td class="w-10" style="height: 20pt;"></td>
+                <td class="w-15"></td>
+                <td class="w-15"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="w-15"></td>
+                <td class="w-25"></td>
+                <td></td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="12" class="border-none">
+                    H: Higiene (cabello corto, uñas limpias y cortas, sin barba ni bigote, ausencia de joyas)  /  ES: Estado de Salud / U: Uniforme completo y en buen estado
+                </td>
+            </tr>
+            <tr>
+                <td colspan="12" class="border-none">
+                    &#x2713;: Conforme /  X: No Conforme
+                </td>
+            </tr>
             <tr>
                 <td colspan="4" class="border-none">
                     Frecuencia: {{ frecuencia_registro }}
