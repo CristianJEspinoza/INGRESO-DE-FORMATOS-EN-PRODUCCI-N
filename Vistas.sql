@@ -733,3 +733,20 @@ SELECT * FROM v_proveedores
 SELECT * FROM public.headers_formats
 
 SELECT * FROM public.detalles_productos_proveedores
+
+CREATE OR REPLACE VIEW v_detalles_productos_proveedores AS
+SELECT
+	d.iddetalle_producto_proveedor,
+	d.cantidad,
+	d.frecuencia,
+	d.producto_proveedor,
+	d.fk_id_asignacion_header,
+	h.id_header_format
+FROM 
+	public.detalles_productos_proveedores d
+JOIN
+	public.asignaciones_provedores_header a ON d.fk_id_asignacion_header = a.id_asignacion_proveedores
+JOIN
+	public.headers_formats h ON h.id_header_format = a.fk_id_header_format;
+
+SELECT * FROM v_detalles_productos_proveedores
