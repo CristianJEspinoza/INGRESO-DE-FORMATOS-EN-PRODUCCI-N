@@ -24,6 +24,7 @@ from routes.monitoreo_calidad_agua import monitoreoAgua
 from routes.control_recepcion_materia_prima import control_recepcion_materia_prima
 from routes.verificacion_calibracion_equipos import verificacion_calibracion_equipos
 from routes.proveedores import proveedores
+from routes.control_visitas import control_visitas
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
@@ -50,6 +51,7 @@ app.register_blueprint(monitoreoAgua, url_prefix = '/monitoreo_agua')
 app.register_blueprint(control_recepcion_materia_prima, url_prefix = '/control_recepcion_materia_prima')
 app.register_blueprint(verificacion_calibracion_equipos, url_prefix='/verificacion_calibracion_equipos')
 app.register_blueprint(proveedores, url_prefix='/proveedores')
+app.register_blueprint(control_visitas,  url_prefix='/control_visitas')
 
 # Definiendo la ruta por defecto
 @app.route('/')
