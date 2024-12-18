@@ -685,6 +685,8 @@ JOIN
 
 -- PARA EL FORMATO DE PROVEEDORES
 
+SELECT * FROM public.headers_formats
+
 SELECT * FROM public.proveedores
 
 SELECT * FROM public.asignaciones_provedores_header
@@ -749,6 +751,23 @@ JOIN
 JOIN
 	public.headers_formats h ON h.id_header_format = a.fk_id_header_format;
 
-SELECT * FROM v_detalles_productos_proveedores
+-- PARA EL FORMATO DE INGRESO DE MATERIA PRIMA
 
-SELECT * FROM public.productos
+CREATE OR REPLACE VIEW v_recepciones_materias_primas AS
+SELECT
+	r.id_recepcion_materia_prima,
+	r.producto_recibido,
+	r.razon_social, 
+	r.factura, 
+	r.lote, 
+	r.cantidad_recibida, 
+	r.f_produccion, 
+	r.f_vencimiento, 
+	r.observaciones, 
+	h.id_header_format, 
+	h.fecha, 
+	h.estado
+FROM
+	public.recepciones_materias_primas r
+JOIN
+	public.headers_formats h ON r.fk_id_header_format = h.id_header_format;
