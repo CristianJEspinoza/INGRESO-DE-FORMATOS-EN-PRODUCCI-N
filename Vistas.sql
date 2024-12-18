@@ -750,3 +750,5 @@ JOIN
 	public.headers_formats h ON h.id_header_format = a.fk_id_header_format;
 
 SELECT * FROM v_detalles_productos_proveedores
+
+SELECT * FROM public.productos

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Control y recepción de materia prima e insumos{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <h1 class="mb-4 text-center" style="color: #FF8C00;">Control y recepción de materia prima e insumos</h1>
+    <!-- Registro de los monitoreos de insectos -->
+    <div class="container-fluid mt-4">
+        <div class="input-container">
+            <label for="filterFechaDetalleCA" style="color: #FF8C00;">Filtrar por fecha:</label>
+            <input type="date" id="filterFechaDetalleCA" class="form-control" name="filterFechaDetalleCA"
+            onchange="filterTableDetalleCA()" 
+            />
+        </div>
+        <!-- Tabla resizable -->
+        <div class="table-responsive mt-2">
+            <table class="table table-bordered" id="detalle_table_HP">
+                <thead style="background-color: #FF8C00; color: white;">
+                    <tr>
+                        <th class="text-center">Producto recibido</th>
+                        <th class="text-center">Razón social</th>
+                        <th class="text-center">N° de factura</th>
+                        <th class="text-center">Lote</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">F. Producción</th>
+                        <th class="text-center">F. Vencimiento</th>
+                        <th class="text-center">F. T.</th>
+                        <th class="text-center">C. C.</th>
+                        <th class="text-center">Color</th>
+                        <th class="text-center">Olor</th>
+                        <th class="text-center">Resultado Final</th>
+                        <th class="text-center">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mp in materias_primas%}
+                    <tr class="text-center">
+                        <th>{{ mp.producto_recibido }}</th>
+                        <th>{{ mp.razon_social }}</th>
+                        <th>{{ mp.factura }}</th>
+                        <th>{{ mp.lote }}</th>
+                        <th>{{ mp.cantidad_recibida }}</th>
+                        <th>{{ mp.f_produccion }}</th>
+                        <th>{{ mp.f_vencimiento }}</th>
+                        <th>{{ mp.producto_recibido }}</th>
+                        <th>{{ mp.producto_recibido }}</th>
+                        <th>{{ mp.producto_recibido }}</th>
+                        <th>{{ mp.producto_recibido }}</th>
+                        <th>{{ mp.producto_recibido }}</th>
+                        <th>{{ mp.observaciones }}</th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

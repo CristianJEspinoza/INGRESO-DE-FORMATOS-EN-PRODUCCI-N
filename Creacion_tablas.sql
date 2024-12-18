@@ -478,3 +478,29 @@ SELECT * FROM public.headers_formats
 	
 ALTER TABLE public.detalles_productos_proveedores
 ADD COLUMN fk_id_asignacion_header INT REFERENCES asignaciones_provedores_header(id_asignacion_proveedores) NULL
+
+CREATE TABLE IF NOT EXISTS recepciones_materias_primas (
+	id_recepcion_materia_prima SERIAL PRIMARY KEY,
+	producto_recibido VARCHAR(100) NOT NULL,
+	razon_social VARCHAR(14) NOT NULL,
+	factura VARCHAR(25) NOT NULL,
+	lote VARCHAR(30) NULL,
+	cantidad_recibida VARCHAR(20) NOT NULL,
+	f_produccion DATE NULL,
+	f_vencimiento DATE NULL,
+	observaciones VARCHAR(100) NULL,
+	fk_id_header_format INT REFERENCES public.headers_formats(id_header_format) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS controles_calidad_mat_primas (
+	id_control_calidad SERIAL PRIMARY KEY,
+	detalle_control VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS asignaciones_controles_mat_primas(
+	id_asignacion_control_mat_prima SERIAL PRIMARY KEY,
+	fk_id_recepcion_materia_prima INT REFERENCES recepciones_materias_primas(id_recepcion_materia_prima) NOT NULL,
+	fk_id_control_calidad INT REFERENCES controles_calidad_mat_primas(id_control_calidad) NOT NULL,
+	estado VARCHAR(15) NOT NULL
+);
+

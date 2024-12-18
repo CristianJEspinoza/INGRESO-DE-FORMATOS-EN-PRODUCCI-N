@@ -75,6 +75,10 @@
                         BPM
                     </a>
                     <div class="dropdown-menu" aria-labelledby="bpmDropdown">
+                        <a class="dropdown-item d-flex align-items-center" href="{{ url_for('control_recepcion_materia_prima.index') }}">
+                            <img src="{{ url_for('static', filename='img/mat_prima.png') }}" alt="Control y recepción de materia prima e insumos" width="20" height="20" class="mr-2">
+                            Control y recepción de materia prima e insumos
+                        </a>
                         <a class="dropdown-item d-flex align-items-center" href="{{ url_for('control_general.control_general') }}">
                             <img src="{{ url_for('static', filename='img/personal.png') }}" alt="Control personal" width="20" height="20" class="mr-2">
                             Control general del personal
