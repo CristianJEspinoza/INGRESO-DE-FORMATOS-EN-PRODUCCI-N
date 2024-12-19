@@ -504,3 +504,26 @@ CREATE TABLE IF NOT EXISTS asignaciones_controles_mat_primas(
 	estado VARCHAR(15) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS control_visitas (
+	idcontrol_visitas SERIAL PRIMARY KEY,
+	fecha DATE NOT NULL,
+	nombres_apellidos VARCHAR(100) NOT NULL,
+	dni VARCHAR(8) NOT NULL,
+	empresa VARCHAR(100) NOT NULL,
+	h_ingreso TIME NOT NULL,
+	h_salida TIME NOT NULL,
+	motivo VARCHAR(150) NOT NULL,
+	observaciones VARCHAR(150) NULL,
+	fk_id_header_format INT REFERENCES public.headers_formats(id_header_format) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS evaluaciones_visitas (
+	id_evaluacion_visita SERIAL PRIMARY KEY,
+	detalle_evaluacion VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS asignaciones_evaluaciones_visitas (
+	id_asignacion_evaluacion_visita SERIAL PRIMARY KEY,
+	fk_ididcontrol_visitas INT REFERENCES control_visitas(idcontrol_visitas) NOT NULL,
+	fk_id_evaluacion_visita INT REFERENCES evaluaciones_visitas(id_evaluacion_visita) NOT NULL
+);

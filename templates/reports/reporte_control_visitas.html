@@ -22,7 +22,6 @@
                 <th class="border" colspan="3">EVALUACIÓN</th>
                 <th class="border" rowspan="2">MOTIVO DE VISITA</th>
                 <th class="border" rowspan="2">OBSERVACIÓN</th>
-                <th class="border" rowspan="2">FIRMA</th>
             </tr>
             <tr>
                 <th class="border">H</th>
@@ -31,23 +30,20 @@
             </tr>
         </thead>
 
-        <!-- Cuerpo del reporte -->
         <tbody class="body-content">
-
-            {% for i in range(15) %}
+            {% for i in info %}
             <tr>
-                <td class="w-10" style="height: 20pt;"></td>
-                <td class="w-15"></td>
-                <td class="w-15"></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="w-15"></td>
-                <td class="w-25"></td>
-                <td></td>
+                <td class="w-10 text-center" style="height: 20pt;">{{ i.fecha }}</td>
+                <td class="w-25" >{{ i.nombres_apellidos }}</td>
+                <td class="w-15 text-center">{{ i.dni }}</td>
+                <td class="w-15 text-center">{{ i.empresa }}</td>
+                <td class="w-15 text-center">{{ i.h_ingreso }}</td>
+                <td class="w-15 text-center">{{ i.h_salida }}</td>
+                <td class="text-center">{{ '✓' if i.eva_h else 'X' }}</td>
+                <td class="text-center">{{ '✓' if i.eva_es else 'X' }}</td>
+                <td class="text-center">{{ '✓' if i.eva_u else 'X' }}</td>
+                <td class="w-15 text-center">{{ i.motivo }}</td>
+                <td class="w-25 text-center">{{ i.observaciones }}</td>
             </tr>
             {% endfor %}
             <tr>
@@ -57,7 +53,7 @@
             </tr>
             <tr>
                 <td colspan="12" class="border-none">
-                    &#x2713;: Conforme /  X: No Conforme
+                    ✓: Conforme /  X: No Conforme
                 </td>
             </tr>
             <tr>
@@ -66,6 +62,7 @@
                 </td>
             </tr>
         </tbody>
+        
 
         <!-- Pie del reporte -->
         <tfoot>

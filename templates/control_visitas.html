@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Control de visitas{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center" style="color: #FFC107;">Control de Visitas</h1>
+<!-- Formulario de Registro -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-header text-white" style="background-color: #FFC107;">
+        <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i> Formulario de Registro</h5>
+    </div>
+    <div class="card-body">
+        <form id="formControlGeneralPersona" method="POST" enctype="multipart/form-data">
+            
+            <div class="form-row mb-3">
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="fechaVisita" class="font-weight-bold" style="color: #FF8C00;">Fecha:</label>
+                    <input type="date" id="fechaVisita" class="form-control" name="fechaVisita" required>
+                </div>
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="nom_apellido" class="font-weight-bold" style="color: #FF8C00;">Nombre y Apellidos:</label>
+                    <input type="text" id="nom_apellido" class="form-control" name="nom_apellido" placeholder="Ingrese el nombre y apellido del visitante" required>
+                </div>
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="dni" class="font-weight-bold" style="color: #FF8C00;">N° DNI:</label>
+                    <input type="number" id="dni" class="form-control" name="dni" placeholder="Ingrese el N° de DNI" required>
+                </div>
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="empresa" class="font-weight-bold" style="color: #FF8C00;">Empresa/Institución:</label>
+                    <input type="text" id="empresa" class="form-control" name="empresa" placeholder="Ingrese la Empresa/Institución" required>
+                </div>
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="h_ingreso" class="font-weight-bold" style="color: #FF8C00;">Hora de Ingreso:</label>
+                    <input type="time" id="h_ingreso" class="form-control" name="h_ingreso" required>
+                </div>
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="h_salida" class="font-weight-bold" style="color: #FF8C00;">Hora de Salida:</label>
+                    <input type="time" id="h_salida" class="form-control" name="h_salida" required>
+                </div>
+            </div>
+            <!-- Evaluaciones -->
+            <div>
+                <label class="font-weight-bold" style="color: #FF8C00;">Evaluación:</label>
+                <div class="row">
+                    {% for e in evaluaciones_visitas %}
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            <input type="checkbox" id="evaluacion_{{ e.id_evaluacion_visita }}" name="evaluaciones" value="{{ e.id_evaluacion_visita }}" class="form-check-input">
+                            <label class="form-check-label" for="evaluacion_{{ e.id_evaluacion_visita }}">{{ e.detalle_evaluacion }}</label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="form-row mb-3 mt-4">
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="motivo_visita" class="font-weight-bold" style="color: #FF8C00;">Motivo de vista:</label>
+                    <input type="text" id="motivo_visita" class="form-control" name="motivo_visita" placeholder="Ingrese el motivo de la visita" required>
+                </div>
+                <div class="form-group col-lg-6 col-md-12">
+                    <label for="observaciones" class="font-weight-bold" style="color: #FF8C00;">Observaciones:</label>
+                    <input type="text" id="observaciones" class="form-control" name="observaciones" placeholder="Ingrese una observación si es que existe">
+                </div>
+            </div>
+            
+            <button type="button" class="btn d-block w-100 mb-4" style="background-color: #FFC107; color: white;" onclick="registrarVisita()">
+                <i class="fas fa-plus-circle"></i> AGREGAR REGISTRO
+            </button>     
+        </form>
+    </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+    <div class="card-header text-white rounded-top d-flex justify-content-between align-items-center" style="background-color: #FF8C00;">
+        <h5 class="mb-0"><i class="fas fa-table me-2"></i> Detalle del Control de Visitas</h5>
+        <a href="{{ url_for('control_visitas.download_formato') }}" class="btn btn-light text-warning fw-bold rounded-pill">
+            <i class="fas fa-file-download me-2"></i> Descargar Formato
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead class="table-warning text-dark">
+                    <tr class="text-center">
+                        <th>FECHA</th>
+                        <th>NOMBRE Y APELLIDOS</th>
+                        <th>N° DNI</th>
+                        <th>EMPRESA/INSTITUCIÓN</th>
+                        <th>H. INGRESO</th>
+                        <th>H. SALIDA</th>
+                        <th>HIGIENE</th>
+                        <th>ESTADO SALUD</th>
+                        <th>UNIFORME COMPLETO</th>
+                        <th>MOTIVO DE VISITA</th>
+                        <th>OBS.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cv in control_visitas %}
+                    <tr>
+                        <td class="text-center">{{ cv.fecha.strftime('%d/%m/%Y') }}</td>
+                        <td class="text-center">{{ cv.nombres_apellidos }}</td>
+                        <td class="text-center">{{ cv.dni }}</td>
+                        <td class="text-center">{{ cv.empresa }}</td>
+                        <td class="text-center">{{ cv.h_ingreso }}</td>
+                        <td class="text-center">{{ cv.h_salida }}</td>
+                        <!-- Comprobación de cada verificación con el id de detalle correspondiente -->
+                        {% set verificaciones = verificacion_visitas | selectattr("fk_ididcontrol_visitas", "equalto", cv.idcontrol_visitas) | list %}
+                        <!-- Verificación H -->
+                        <td class="text-center">
+                            {% set pp_verificacion = verificaciones | selectattr("fk_id_evaluacion_visita", "equalto", 1) | list %}
+                            {% if pp_verificacion and pp_verificacion|length > 0 %}
+                                ✅
+                            {% else %}
+                                ❌
+                            {% endif %}
+                        </td>
+                        <!-- Verificación ES -->
+                        <td class="text-center">
+                            {% set pp_verificacion = verificaciones | selectattr("fk_id_evaluacion_visita", "equalto", 2) | list %}
+                            {% if pp_verificacion and pp_verificacion|length > 0 %}
+                                ✅
+                            {% else %}
+                                ❌
+                            {% endif %}
+                        </td>
+                        <!-- Verificación U -->
+                        <td class="text-center">
+                            {% set pp_verificacion = verificaciones | selectattr("fk_id_evaluacion_visita", "equalto", 3) | list %}
+                            {% if pp_verificacion and pp_verificacion|length > 0 %}
+                                ✅
+                            {% else %}
+                                ❌
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{{ cv.motivo }}</td>
+                        <td class="text-center">{{ cv.observaciones }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/control_visitas.js') }}"></script>
+
+{% endblock %}

@@ -771,3 +771,20 @@ FROM
 	public.recepciones_materias_primas r
 JOIN
 	public.headers_formats h ON r.fk_id_header_format = h.id_header_format;
+
+
+-- PARA EL FORMATO DE INGRESO DE CONTROL DE VISITAS
+
+SELECT * FROM public.control_visitas
+
+SELECT * FROM public.asignaciones_evaluaciones_visitas
+SELECT * FROM public.headers_formats
+SELECT * FROM public.tiposformatos
+SELECT 
+	fk_ididcontrol_visitas, 
+	fk_id_evaluacion_visita 
+FROM asignaciones_evaluaciones_visitas 
+SELECT * FROM evaluaciones_visitas
+
+SELECT * FROM control_visitas 
+        ORDER BY fecha
